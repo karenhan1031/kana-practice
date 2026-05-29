@@ -158,16 +158,22 @@ html,body { height:100%; background:var(--bg); color:var(--text);
   padding:4px 9px; font-size:0.95rem; cursor:pointer; color:var(--muted); flex-shrink:0; line-height:1.4; }
 .mute-btn.muted { color:var(--wrong); border-color:var(--wrong); }
 
-/* Vocab list lesson nav */
+/* Vocab list sticky area */
+.vl-sticky { position:sticky; top:57px; z-index:99; background:var(--card); }
+.vl-search-wrap { padding:10px 20px; border-bottom:1px solid #e2e8f0; }
+.vl-search { width:100%; padding:10px 14px; border:1.5px solid #e2e8f0; border-radius:10px;
+  font-size:0.95rem; background:var(--bg); color:var(--text); outline:none; }
+.vl-search:focus { border-color:var(--accent-vocab); }
 .vl-nav { background:var(--card); border-bottom:1px solid #e2e8f0;
-  padding:8px 20px; overflow-x:auto; display:flex; gap:8px; white-space:nowrap;
-  position:sticky; top:57px; z-index:99; }
+  padding:8px 20px; overflow-x:auto; display:flex; gap:8px; white-space:nowrap; }
 .vl-nav::-webkit-scrollbar { display:none; }
 .vl-nav-btn { background:var(--card2); border:none; border-radius:20px; padding:5px 12px;
   font-size:0.75rem; color:var(--muted); cursor:pointer; flex-shrink:0; transition:all 0.15s; }
 .vl-nav-btn:active { background:var(--accent-vocab); color:#fff; }
 .vl-wcount { font-size:0.68rem; color:var(--accent-vocab); font-weight:600; }
-.vl-lesson { scroll-margin-top:105px; }
+.vl-lesson { scroll-margin-top:170px; }
+.vl-lesson-tag { font-size:0.68rem; color:var(--muted); flex-shrink:0;
+  background:var(--card2); padding:2px 6px; border-radius:10px; }
 
 /* Kana companion bar */
 .kana-companion { position:fixed; bottom:0; left:0; right:0; background:var(--card);
@@ -248,7 +254,12 @@ html,body { height:100%; background:var(--bg); color:var(--text);
     <button class="mute-btn" id="mute-btn-vl" onclick="toggleMute()">🔊</button>
     <button class="speed-btn" onclick="cycleRate()">0.6x</button>
   </div>
-  <div class="vl-nav" id="vl-nav"></div>
+  <div class="vl-sticky">
+    <div class="vl-search-wrap">
+      <input class="vl-search" id="vl-search" type="search" placeholder="搜尋單字（日文 / 中文）" oninput="searchVocab(this.value)">
+    </div>
+    <div class="vl-nav" id="vl-nav"></div>
+  </div>
   <div id="vocab-list-container"></div>
 </div>
 
@@ -952,11 +963,44 @@ function retry() {
 const collapsedLessons = new Set();
 
 function renderVocabList() {
+  const searchEl = document.getElementById('vl-search');
+  if (searchEl) searchEl.value = '';
   const nav = document.getElementById('vl-nav');
+  nav.style.display = '';
   nav.innerHTML = LESSONS.map(({l}) =>
     `<button class="vl-nav-btn" onclick="scrollToLesson(${l})">L${l}</button>`
   ).join('');
+  renderVocabListContent('');
+}
+function renderVocabListContent(q) {
   const container = document.getElementById('vocab-list-container');
+  const ql = q.toLowerCase();
+  if (ql) {
+    const results = [];
+    LESSONS.forEach(({l, words}) => {
+      words.forEach(w => {
+        if (w.k.toLowerCase().includes(ql) || w.r.toLowerCase().includes(ql) || w.m.includes(ql))
+          results.push({...w, lesson:l});
+      });
+    });
+    if (!results.length) {
+      container.innerHTML = `<p style="text-align:center;color:var(--muted);padding:40px 20px">找不到「${q}」</p>`;
+      return;
+    }
+    container.innerHTML = results.map(w =>
+      `<div class="vl-word" style="padding:9px 20px" onclick="speak('${w.k.replace(/'/g,"\\'")}')">
+        <div class="vl-jp-block">
+          <span class="vl-jp">${hlMatch(w.k,ql)}</span>
+          <span class="vl-rom">${w.r}</span>
+        </div>
+        <span class="vl-sep">→</span>
+        <span class="vl-cn">${hlMatch(w.m,ql)}</span>
+        <span class="vl-lesson-tag">L${w.lesson}</span>
+        <span class="vl-sound">♪</span>
+      </div>`
+    ).join('');
+    return;
+  }
   container.innerHTML = LESSONS.map(({l, title, words}) => {
     const isOpen = !collapsedLessons.has(l);
     const wordRows = words.map(w =>
@@ -982,6 +1026,17 @@ function renderVocabList() {
       <div class="vl-words" id="vl-words-${l}" style="display:${isOpen?'block':'none'}">${wordRows}</div>
     </div>`;
   }).join('');
+}
+function hlMatch(text, q) {
+  if (!q) return text;
+  const i = text.toLowerCase().indexOf(q);
+  if (i < 0) return text;
+  return text.slice(0,i) + `<mark style="background:#fef08a;border-radius:2px;padding:0 1px">${text.slice(i,i+q.length)}</mark>` + text.slice(i+q.length);
+}
+function searchVocab(query) {
+  const q = query.trim();
+  document.getElementById('vl-nav').style.display = q ? 'none' : '';
+  renderVocabListContent(q);
 }
 
 function toggleLesson(l) {
