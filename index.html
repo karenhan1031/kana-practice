@@ -174,6 +174,8 @@ html,body { height:100%; background:var(--bg); color:var(--text);
 .vl-lesson { scroll-margin-top:170px; }
 .vl-lesson-tag { font-size:0.68rem; color:var(--muted); flex-shrink:0;
   background:var(--card2); padding:2px 6px; border-radius:10px; }
+.vl-num { font-size:0.68rem; color:var(--muted); min-width:1.8rem; text-align:right;
+  flex-shrink:0; padding-right:4px; }
 
 /* Kana companion bar */
 .kana-companion { position:fixed; bottom:0; left:0; right:0; background:var(--card);
@@ -452,15 +454,20 @@ ROWS.hiragana.forEach((hr, ri) => {
 const LESSONS = [
   { l:1, title:'初めまして', words:[
     {k:'わたし',r:'watashi',m:'我'},{k:'あなた',r:'anata',m:'你／您'},
+    {k:'あのひと',r:'anohito',m:'他／她（那個人）'},{k:'あのかた',r:'anokata',m:'那位（敬語）'},
+    {k:'〜さん',r:'san',m:'先生／小姐（敬稱）'},{k:'〜ちゃん',r:'chan',m:'〜（小孩親暱稱）'},
+    {k:'〜じん',r:'jin',m:'〜人（表示國籍）'},
     {k:'せんせい',r:'sensei',m:'老師'},{k:'きょうし',r:'kyoushi',m:'教師'},
     {k:'がくせい',r:'gakusei',m:'學生'},{k:'かいしゃいん',r:'kaishain',m:'公司職員'},
     {k:'しゃいん',r:'shain',m:'社員'},{k:'ぎんこういん',r:'ginkouin',m:'銀行行員'},
     {k:'いしゃ',r:'isha',m:'醫生'},{k:'けんきゅうしゃ',r:'kenkyuusha',m:'研究員'},
     {k:'だいがく',r:'daigaku',m:'大學'},{k:'びょういん',r:'byouin',m:'醫院'},
-    {k:'なんさい',r:'nansai',m:'幾歲'},{k:'はい',r:'hai',m:'是／對'},{k:'いいえ',r:'iie',m:'不是'},
+    {k:'だれ',r:'dare',m:'誰'},{k:'どなた',r:'donata',m:'哪位（敬語）'},
+    {k:'〜さい',r:'sai',m:'〜歲'},{k:'なんさい',r:'nansai',m:'幾歲'},
+    {k:'はい',r:'hai',m:'是／對'},{k:'いいえ',r:'iie',m:'不是'},
   ]},
   { l:2, title:'これからお世話になります', words:[
-    {k:'これ',r:'kore',m:'這個'},{k:'それ',r:'sore',m:'那個'},{k:'あれ',r:'are',m:'那個（遠）'},
+    {k:'これ',r:'kore',m:'這個'},{k:'それ',r:'sore',m:'那個'},{k:'あれ',r:'are',m:'那個（遠）'},{k:'どれ',r:'dore',m:'哪個'},
     {k:'ほん',r:'hon',m:'書'},{k:'じしょ',r:'jisho',m:'字典'},{k:'ざっし',r:'zasshi',m:'雜誌'},
     {k:'しんぶん',r:'shinbun',m:'報紙'},{k:'ノート',r:'nooto',m:'筆記本'},{k:'めいし',r:'meishi',m:'名片'},
     {k:'えんぴつ',r:'enpitsu',m:'鉛筆'},{k:'ボールペン',r:'boorupen',m:'原子筆'},{k:'かぎ',r:'kagi',m:'鑰匙'},
@@ -497,7 +504,12 @@ const LESSONS = [
     {k:'たんじょうび',r:'tanjoubi',m:'生日'},{k:'せんしゅう',r:'senshuu',m:'上星期'},{k:'こんしゅう',r:'konshuu',m:'這星期'},
     {k:'らいしゅう',r:'raishuu',m:'下星期'},{k:'きょねん',r:'kyonen',m:'去年'},{k:'ことし',r:'kotoshi',m:'今年'},
     {k:'らいねん',r:'rainen',m:'明年'},{k:'ついたち',r:'tsuitachi',m:'1日'},{k:'ふつか',r:'futsuka',m:'2日'},
-    {k:'みっか',r:'mikka',m:'3日'},{k:'よっか',r:'yokka',m:'4日'},{k:'はつか',r:'hatsuka',m:'20日'},
+    {k:'みっか',r:'mikka',m:'3日'},{k:'よっか',r:'yokka',m:'4日'},{k:'いつか',r:'itsuka',m:'5日'},
+    {k:'むいか',r:'muika',m:'6日'},{k:'なのか',r:'nanoka',m:'7日'},{k:'ようか',r:'youka',m:'8日'},
+    {k:'ここのか',r:'kokonoka',m:'9日'},{k:'とおか',r:'tooka',m:'10日'},
+    {k:'じゅうよっか',r:'juuyokka',m:'14日'},{k:'はつか',r:'hatsuka',m:'20日'},
+    {k:'にじゅうよっか',r:'nijuuyokka',m:'24日'},
+    {k:'いつ',r:'itsu',m:'什麼時候'},{k:'やすみ',r:'yasumi',m:'假期／休假'},
   ]},
   { l:6, title:'いっしょに行きませんか', words:[
     {k:'たべます',r:'tabemasu',m:'吃'},{k:'のみます',r:'nomimasu',m:'喝'},{k:'みます',r:'mimasu',m:'看'},
@@ -520,6 +532,7 @@ const LESSONS = [
     {k:'もう',r:'mou',m:'已經'},{k:'まだ',r:'mada',m:'還沒'},
   ]},
   { l:8, title:'そろそろ失礼します', words:[
+    {k:'ハンサム',r:'hansamu',m:'英俊（帥氣）'},
     {k:'きれい',r:'kirei',m:'漂亮／乾淨'},{k:'しずか',r:'shizuka',m:'安靜'},{k:'にぎやか',r:'nigiyaka',m:'熱鬧'},
     {k:'ゆうめい',r:'yuumei',m:'有名'},{k:'しんせつ',r:'shinsetsu',m:'親切'},{k:'げんき',r:'genki',m:'健康／有精神'},
     {k:'べんり',r:'benri',m:'方便'},{k:'おおきい',r:'ookii',m:'大'},{k:'ちいさい',r:'chiisai',m:'小'},
@@ -541,7 +554,7 @@ const LESSONS = [
   { l:10, title:'ナンプラー、ありますか', words:[
     {k:'あります',r:'arimasu',m:'有（東西）'},{k:'います',r:'imasu',m:'有（人／動物）'},
     {k:'いぬ',r:'inu',m:'狗'},{k:'ねこ',r:'neko',m:'貓'},{k:'き',r:'ki',m:'樹木'},
-    {k:'れいぞうこ',r:'reizouko',m:'冰箱'},{k:'テーブル',r:'teebyuru',m:'桌子'},{k:'ベッド',r:'beddo',m:'床'},
+    {k:'れいぞうこ',r:'reizouko',m:'冰箱'},{k:'テーブル',r:'teeburu',m:'桌子'},{k:'ベッド',r:'beddo',m:'床'},
     {k:'ドア',r:'doa',m:'門'},{k:'まど',r:'mado',m:'窗戶'},{k:'コンビニ',r:'konbini',m:'便利商店'},
     {k:'こうえん',r:'kouen',m:'公園'},{k:'きっさてん',r:'kissaten',m:'咖啡廳'},{k:'うえ',r:'ue',m:'上'},
     {k:'した',r:'shita',m:'下'},{k:'まえ',r:'mae',m:'前'},{k:'うしろ',r:'ushiro',m:'後'},
@@ -1003,8 +1016,9 @@ function renderVocabListContent(q) {
   }
   container.innerHTML = LESSONS.map(({l, title, words}) => {
     const isOpen = !collapsedLessons.has(l);
-    const wordRows = words.map(w =>
+    const wordRows = words.map((w,i) =>
       `<div class="vl-word" onclick="speak('${w.k.replace(/'/g,"\\'")}')">
+        <span class="vl-num">${i+1}.</span>
         <div class="vl-jp-block">
           <span class="vl-jp">${w.k}</span>
           <span class="vl-rom">${w.r}</span>
