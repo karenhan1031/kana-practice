@@ -5,54 +5,77 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>假名練習</title>
+<title>日文練習</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 :root {
-  --bg: #f0f4f8; --card: #ffffff; --card2: #e8edf3;
-  --accent: #d63651; --accent-kata: #2563eb;
-  --correct: #16a34a; --wrong: #dc2626;
-  --text: #111827; --muted: #6b7280;
+  --bg:#f0f4f8; --card:#fff; --card2:#e8edf3;
+  --accent:#d63651; --accent-kata:#2563eb; --accent-vocab:#7c3aed;
+  --correct:#16a34a; --wrong:#dc2626;
+  --text:#111827; --muted:#6b7280;
 }
-html, body { height: 100%; background: var(--bg); color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow-x: hidden; }
-.screen { display: none; flex-direction: column; min-height: 100vh; padding-bottom: 32px; animation: fadeIn 0.2s ease; }
-.screen.active { display: flex; }
-@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+html,body { height:100%; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; overflow-x:hidden; }
+.screen { display:none; flex-direction:column; min-height:100vh; padding-bottom:32px; animation:fadeIn 0.2s ease; }
+.screen.active { display:flex; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
-/* ── Shared ── */
-.header { display:flex; align-items:center; gap:12px; padding:16px 20px; border-bottom:1px solid #e2e8f0; background:var(--card); }
-.header h1 { font-size:1.1rem; font-weight:600; }
+/* Shared */
+.header { display:flex; align-items:center; gap:12px; padding:16px 20px;
+  border-bottom:1px solid #e2e8f0; background:var(--card); }
+.header h1 { font-size:1.1rem; font-weight:600; flex:1; }
 .back-btn { background:none; border:none; color:var(--text); font-size:1.5rem; cursor:pointer; padding:4px 8px; line-height:1; }
 .type-toggle { display:flex; margin:16px 20px 0; background:var(--card2); border-radius:12px; padding:4px; }
 .type-btn { flex:1; padding:10px; border:none; border-radius:8px; background:none; color:var(--muted); font-size:1rem; cursor:pointer; transition:all 0.2s; }
 .type-btn.hira.active { background:var(--accent); color:#fff; font-weight:600; }
 .type-btn.kata.active { background:var(--accent-kata); color:#fff; font-weight:600; }
-.btn-primary { width:100%; padding:16px; border:none; border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; min-height:56px; transition:opacity 0.15s; }
+.btn-primary { width:100%; padding:16px; border:none; border-radius:12px; font-size:1rem; font-weight:600;
+  cursor:pointer; min-height:56px; transition:opacity 0.15s; color:#fff; }
 .btn-primary:active { opacity:0.8; }
-.btn-primary.hira { background:var(--accent); color:#fff; }
-.btn-primary.kata { background:var(--accent-kata); color:#fff; }
-.btn-secondary { width:100%; padding:14px; background:var(--card); color:var(--text); border:1px solid #e2e8f0; border-radius:12px; font-size:1rem; cursor:pointer; min-height:56px; }
+.btn-primary.hira  { background:var(--accent); }
+.btn-primary.kata  { background:var(--accent-kata); }
+.btn-primary.vocab { background:var(--accent-vocab); }
+.btn-secondary { width:100%; padding:14px; background:var(--card); color:var(--text);
+  border:1px solid #e2e8f0; border-radius:12px; font-size:1rem; cursor:pointer; min-height:56px; }
 .bottom-actions { padding:0 20px; display:flex; flex-direction:column; gap:10px; margin-top:12px; }
 
-/* ── Home ── */
+/* Home */
+.home-mode-toggle { display:flex; margin:16px 20px 0; background:var(--card2); border-radius:12px; padding:4px; }
+.hm-btn { flex:1; padding:10px; border:none; border-radius:8px; background:none;
+  color:var(--muted); font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+.hm-btn.active-kana { background:var(--accent); color:#fff; font-weight:600; }
+.hm-btn.active-vocab { background:var(--accent-vocab); color:#fff; font-weight:600; }
 .row-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:16px 20px; }
 .sec-label { grid-column:1/-1; font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em;
   padding:8px 4px 2px; border-top:1px solid #e2e8f0; margin-top:4px; }
 .sec-label:first-child { border-top:none; margin-top:0; }
-.row-btn { background:var(--card); border:1px solid #e2e8f0; border-radius:12px; padding:16px 10px; text-align:center; cursor:pointer; color:var(--text); transition:transform 0.1s, box-shadow 0.1s; box-shadow:0 1px 3px #0000000a; }
+.row-btn { background:var(--card); border:1px solid #e2e8f0; border-radius:12px; padding:16px 10px;
+  text-align:center; cursor:pointer; color:var(--text);
+  transition:transform 0.1s, box-shadow 0.1s; box-shadow:0 1px 3px #0000000a; }
 .row-btn:active { transform:scale(0.95); box-shadow:none; }
 .row-name { font-size:1.25rem; font-weight:600; display:block; }
 .row-stat { font-size:0.7rem; color:var(--muted); margin-top:5px; display:block; }
 .row-stat.good { color:var(--correct); } .row-stat.bad { color:var(--wrong); }
 
-/* ── Table ── */
+/* Vocab lesson grid */
+.lesson-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:16px 20px; }
+.lesson-btn { background:var(--card); border:1px solid #e2e8f0; border-radius:12px; padding:14px 10px;
+  text-align:center; cursor:pointer; color:var(--text);
+  transition:transform 0.1s; box-shadow:0 1px 3px #0000000a; }
+.lesson-btn:active { transform:scale(0.95); }
+.lesson-num { font-size:1.1rem; font-weight:700; color:var(--accent-vocab); display:block; }
+.lesson-title { font-size:0.72rem; color:var(--muted); margin-top:3px; display:block; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; }
+.lesson-stat { font-size:0.68rem; color:var(--muted); margin-top:4px; display:block; }
+.lesson-stat.good { color:var(--correct); } .lesson-stat.bad { color:var(--wrong); }
+
+/* Table */
 .tbl-section { padding:0 20px 4px; }
 .tbl-section-title { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em;
   padding:16px 0 8px; border-top:1px solid #e2e8f0; margin-top:4px; }
 .tbl-section:first-child .tbl-section-title { border-top:none; padding-top:16px; }
 .kana-table { width:100%; border-collapse:collapse; }
-.kana-table th, .kana-table td { text-align:center; padding:4px 2px; border:1px solid #e2e8f0; min-width:42px; }
+.kana-table th,.kana-table td { text-align:center; padding:4px 2px; border:1px solid #e2e8f0; min-width:42px; }
 .kana-table th { color:var(--muted); font-size:0.7rem; font-weight:400; background:#f8fafc; }
 .kana-cell { display:flex; flex-direction:column; align-items:center; gap:1px; cursor:pointer; padding:5px 0; border-radius:6px; transition:background 0.15s; }
 .kana-cell:active { background:#0000000a; }
@@ -62,61 +85,122 @@ html, body { height: 100%; background: var(--bg); color: var(--text);
 .k-rom { font-size:0.6rem; color:var(--muted); }
 .k-rom.arc { color:#b0b8c4; font-style:italic; }
 
-/* ── Practice ── */
-.practice-top { display:flex; align-items:center; gap:12px; padding:16px 20px; background:var(--card); border-bottom:1px solid #e2e8f0; }
+/* Practice */
+.practice-top { display:flex; align-items:center; gap:12px; padding:16px 20px;
+  background:var(--card); border-bottom:1px solid #e2e8f0; }
 .prog-wrap { flex:1; height:6px; background:var(--card2); border-radius:3px; overflow:hidden; }
 .prog-fill { height:100%; background:var(--accent); border-radius:3px; transition:width 0.35s ease; }
-.prog-fill.kata { background:var(--accent-kata); }
+.prog-fill.kata  { background:var(--accent-kata); }
+.prog-fill.vocab { background:var(--accent-vocab); }
 .prog-label { font-size:0.82rem; color:var(--muted); white-space:nowrap; }
 .mode-tag { text-align:center; font-size:0.75rem; color:var(--muted); padding:8px 20px 4px; }
-.q-area { flex:1; display:flex; align-items:center; justify-content:center; padding:20px; cursor:pointer; flex-direction:column; gap:8px; }
-.q-char { font-size:6rem; line-height:1; text-align:center; user-select:none; color:var(--text); }
-.q-text { font-size:2.8rem; font-weight:700; text-align:center; letter-spacing:0.05em; user-select:none; color:var(--accent); }
+.q-area { flex:1; display:flex; align-items:center; justify-content:center;
+  padding:20px; cursor:pointer; flex-direction:column; gap:8px; min-height:180px; }
+.q-char { font-size:5rem; line-height:1; text-align:center; user-select:none; }
+.q-text { font-size:2.4rem; font-weight:700; text-align:center; letter-spacing:0.05em; user-select:none; color:var(--accent); }
+.q-vocab-jp { font-size:3rem; font-weight:700; text-align:center; user-select:none; line-height:1.2; }
+.q-vocab-cn { font-size:1.5rem; font-weight:600; text-align:center; user-select:none; color:var(--accent-vocab); }
 .q-hint { font-size:0.72rem; color:var(--muted); }
 .choices { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 20px 20px; }
-.choice-btn { padding:18px 8px; background:var(--card); border:1.5px solid #e2e8f0; border-radius:12px;
-  color:var(--text); font-size:1.25rem; cursor:pointer; transition:all 0.15s; min-height:64px; line-height:1.2;
-  box-shadow:0 1px 3px #0000000a; }
+.choice-btn { padding:14px 8px; background:var(--card); border:1.5px solid #e2e8f0; border-radius:12px;
+  color:var(--text); font-size:1.15rem; cursor:pointer; transition:all 0.15s;
+  min-height:60px; line-height:1.3; box-shadow:0 1px 3px #0000000a; }
+.choice-btn.vocab-choice { font-size:0.9rem; padding:12px 8px; }
 .choice-btn:disabled { cursor:default; }
 .choice-btn.correct { background:var(--correct) !important; color:#fff; border-color:var(--correct); }
 .choice-btn.wrong   { background:var(--wrong)   !important; color:#fff; border-color:var(--wrong); }
 .choice-btn.reveal  { background:var(--correct) !important; color:#fff; border-color:var(--correct); }
 
-/* ── Result ── */
+/* Result */
 .result-score { text-align:center; padding:40px 20px 24px; }
 .score-big { font-size:5rem; font-weight:700; line-height:1; color:var(--accent); }
 .score-denom { font-size:1.6rem; color:var(--muted); }
 .score-msg { font-size:1rem; color:var(--muted); margin-top:8px; }
 .missed-wrap { padding:0 20px 8px; }
 .missed-wrap h3 { font-size:0.85rem; color:var(--muted); margin-bottom:10px; }
-.missed-item { display:flex; align-items:center; gap:14px; background:var(--card); border:1px solid #e2e8f0; border-radius:10px; padding:12px 16px; margin-bottom:8px; cursor:pointer; box-shadow:0 1px 3px #0000000a; }
+.missed-item { display:flex; align-items:center; gap:14px; background:var(--card);
+  border:1px solid #e2e8f0; border-radius:10px; padding:12px 16px; margin-bottom:8px;
+  cursor:pointer; box-shadow:0 1px 3px #0000000a; }
 .missed-item:active { opacity:0.7; }
-.m-kana { font-size:1.6rem; min-width:2rem; text-align:center; }
-.m-arrow { color:var(--muted); font-size:0.9rem; }
-.m-rom { font-size:1rem; }
+.m-kana { font-size:1.5rem; min-width:2.5rem; text-align:center; }
+.m-arrow { color:var(--muted); font-size:0.9rem; flex-shrink:0; }
+.m-rom { font-size:0.9rem; color:var(--text); }
+
+/* Vocab list */
+.vl-lesson { padding:0 20px; }
+.vl-lesson-hd { display:flex; align-items:center; justify-content:space-between;
+  padding:14px 0 8px; border-bottom:2px solid var(--accent-vocab); margin-bottom:2px; cursor:pointer; }
+.vl-lesson-hd-left { display:flex; align-items:baseline; gap:8px; }
+.vl-lnum { font-size:1rem; font-weight:700; color:var(--accent-vocab); }
+.vl-ltitle { font-size:0.8rem; color:var(--muted); }
+.vl-toggle { font-size:0.8rem; color:var(--muted); }
+.vl-words { }
+.vl-word { display:flex; align-items:center; padding:9px 4px;
+  border-bottom:1px solid #f0f0f0; cursor:pointer; gap:12px; }
+.vl-word:active { background:#f8f8f8; border-radius:8px; }
+.vl-jp-block { display:flex; flex-direction:column; min-width:7rem; }
+.vl-jp { font-size:1.05rem; font-weight:600; }
+.vl-rom { font-size:0.68rem; color:var(--accent-vocab); margin-top:1px; }
+.vl-sep { color:var(--muted); font-size:0.85rem; flex-shrink:0; }
+.vl-cn { font-size:0.9rem; color:var(--muted); flex:1; }
+.vl-sound { font-size:0.8rem; color:var(--accent-vocab); flex-shrink:0; opacity:0.6; }
+
+/* Speed btn */
+.speed-btn { background:var(--card2); border:1px solid #e2e8f0; border-radius:20px;
+  color:var(--muted); font-size:0.78rem; font-weight:600; padding:5px 11px;
+  cursor:pointer; white-space:nowrap; flex-shrink:0; }
+.speed-btn:active { opacity:0.7; }
 </style>
 </head>
 <body>
 
 <!-- Home -->
 <div id="s-home" class="screen active">
-  <div class="header"><h1>假名練習</h1></div>
-  <div class="type-toggle">
-    <button class="type-btn hira active" id="home-hira" onclick="setType('hiragana')">平假名　あ</button>
-    <button class="type-btn kata"        id="home-kata" onclick="setType('katakana')">片假名　ア</button>
+  <div class="header"><h1>日文練習</h1></div>
+  <div class="home-mode-toggle">
+    <button class="hm-btn active-kana" id="hm-kana" onclick="setHomeMode('kana')">假名練習</button>
+    <button class="hm-btn" id="hm-vocab" onclick="setHomeMode('vocab')">單字練習</button>
   </div>
-  <div class="row-grid" id="row-grid"></div>
-  <div class="bottom-actions">
-    <button class="btn-primary hira" id="all-btn" onclick="startPractice(null)">全部隨機練習</button>
-    <button class="btn-secondary" onclick="go('s-table')">查看假名表</button>
+
+  <!-- Kana section -->
+  <div id="home-kana-section">
+    <div class="type-toggle">
+      <button class="type-btn hira active" id="home-hira" onclick="setKanaType('hiragana')">平假名　あ</button>
+      <button class="type-btn kata"        id="home-kata" onclick="setKanaType('katakana')">片假名　ア</button>
+    </div>
+    <div class="row-grid" id="row-grid"></div>
+    <div class="bottom-actions">
+      <button class="btn-primary hira" id="all-btn" onclick="startKanaPractice(null)">全部隨機練習</button>
+      <button class="btn-secondary" onclick="go('s-table')">查看五十音表</button>
+    </div>
   </div>
+
+  <!-- Vocab section -->
+  <div id="home-vocab-section" style="display:none">
+    <div class="lesson-grid" id="lesson-grid"></div>
+    <div class="bottom-actions">
+      <button class="btn-primary vocab" onclick="startVocabPractice(null)">全課隨機練習</button>
+      <button class="btn-secondary" onclick="go('s-vocab-list')">查看全部單字</button>
+    </div>
+  </div>
+</div>
+
+<!-- Vocab List -->
+<div id="s-vocab-list" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="go('s-home')">←</button>
+    <h1>單字表</h1>
+    <button class="speed-btn" onclick="cycleRate()">0.6x</button>
+  </div>
+  <div id="vocab-list-container"></div>
 </div>
 
 <!-- Table -->
 <div id="s-table" class="screen">
   <div class="header">
     <button class="back-btn" onclick="go('s-home')">←</button>
-    <h1>假名表</h1>
+    <h1>五十音表</h1>
+    <button class="speed-btn" onclick="cycleRate()">0.6x</button>
   </div>
   <div class="type-toggle">
     <button class="type-btn hira active" id="tbl-hira" onclick="setTableType('hiragana')">平假名　あ</button>
@@ -131,6 +215,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text);
     <button class="back-btn" onclick="go('s-home')">←</button>
     <div class="prog-wrap"><div class="prog-fill" id="prog-fill"></div></div>
     <span class="prog-label" id="prog-label">1 / 10</span>
+    <button class="speed-btn" onclick="cycleRate()">0.6x</button>
   </div>
   <div class="mode-tag" id="mode-tag"></div>
   <div class="q-area" id="q-area" onclick="replayAudio()"></div>
@@ -152,91 +237,210 @@ html, body { height: 100%; background: var(--bg); color: var(--text);
 </div>
 
 <script>
-// ── Speech ────────────────────────────────────────────────────────────
+// ── Speech ─────────────────────────────────────────────────────────────
+const RATES = [0.4, 0.6, 0.8, 1.0];
+const RATE_LABELS = ['0.4x', '0.6x', '0.8x', '1.0x'];
+let speechRateIdx = parseInt(localStorage.getItem('kana_rate_idx') || '1');
 let lastSpoken = '';
 function speak(text) {
   if (!window.speechSynthesis) return;
   lastSpoken = text;
   window.speechSynthesis.cancel();
   const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'ja-JP';
-  utt.rate = 0.8;
+  utt.lang = 'ja-JP'; utt.rate = RATES[speechRateIdx];
   window.speechSynthesis.speak(utt);
 }
 function replayAudio() { if (lastSpoken) speak(lastSpoken); }
+function cycleRate() {
+  speechRateIdx = (speechRateIdx + 1) % RATES.length;
+  localStorage.setItem('kana_rate_idx', speechRateIdx);
+  document.querySelectorAll('.speed-btn').forEach(b => b.textContent = RATE_LABELS[speechRateIdx]);
+  if (lastSpoken) speak(lastSpoken);
+}
 
-// ── Data ─────────────────────────────────────────────────────────────
-// p:false = table only (archaic / same-sound as another char)
+// ── Kana Data ──────────────────────────────────────────────────────────
 const ROWS = {
   hiragana: [
-    // 清音
-    { row:'あ行', cat:'seion', chars:[{k:'あ',r:'a'},{k:'い',r:'i'},{k:'う',r:'u'},{k:'え',r:'e'},{k:'お',r:'o'}] },
-    { row:'か行', cat:'seion', chars:[{k:'か',r:'ka'},{k:'き',r:'ki'},{k:'く',r:'ku'},{k:'け',r:'ke'},{k:'こ',r:'ko'}] },
-    { row:'さ行', cat:'seion', chars:[{k:'さ',r:'sa'},{k:'し',r:'shi'},{k:'す',r:'su'},{k:'せ',r:'se'},{k:'そ',r:'so'}] },
-    { row:'た行', cat:'seion', chars:[{k:'た',r:'ta'},{k:'ち',r:'chi'},{k:'つ',r:'tsu'},{k:'て',r:'te'},{k:'と',r:'to'}] },
-    { row:'な行', cat:'seion', chars:[{k:'な',r:'na'},{k:'に',r:'ni'},{k:'ぬ',r:'nu'},{k:'ね',r:'ne'},{k:'の',r:'no'}] },
-    { row:'は行', cat:'seion', chars:[{k:'は',r:'ha'},{k:'ひ',r:'hi'},{k:'ふ',r:'fu'},{k:'へ',r:'he'},{k:'ほ',r:'ho'}] },
-    { row:'ま行', cat:'seion', chars:[{k:'ま',r:'ma'},{k:'み',r:'mi'},{k:'む',r:'mu'},{k:'め',r:'me'},{k:'も',r:'mo'}] },
-    { row:'や行', cat:'seion', chars:[{k:'や',r:'ya'},{k:'ゆ',r:'yu'},{k:'よ',r:'yo'}] },
-    { row:'ら行', cat:'seion', chars:[{k:'ら',r:'ra'},{k:'り',r:'ri'},{k:'る',r:'ru'},{k:'れ',r:'re'},{k:'ろ',r:'ro'}] },
-    { row:'わ行', cat:'seion', chars:[{k:'わ',r:'wa'},{k:'を',r:'wo'},{k:'ん',r:'n'}] },
-    // 濁音
+    { row:'あ行', cat:'seion',   chars:[{k:'あ',r:'a'},{k:'い',r:'i'},{k:'う',r:'u'},{k:'え',r:'e'},{k:'お',r:'o'}] },
+    { row:'か行', cat:'seion',   chars:[{k:'か',r:'ka'},{k:'き',r:'ki'},{k:'く',r:'ku'},{k:'け',r:'ke'},{k:'こ',r:'ko'}] },
+    { row:'さ行', cat:'seion',   chars:[{k:'さ',r:'sa'},{k:'し',r:'shi'},{k:'す',r:'su'},{k:'せ',r:'se'},{k:'そ',r:'so'}] },
+    { row:'た行', cat:'seion',   chars:[{k:'た',r:'ta'},{k:'ち',r:'chi'},{k:'つ',r:'tsu'},{k:'て',r:'te'},{k:'と',r:'to'}] },
+    { row:'な行', cat:'seion',   chars:[{k:'な',r:'na'},{k:'に',r:'ni'},{k:'ぬ',r:'nu'},{k:'ね',r:'ne'},{k:'の',r:'no'}] },
+    { row:'は行', cat:'seion',   chars:[{k:'は',r:'ha'},{k:'ひ',r:'hi'},{k:'ふ',r:'fu'},{k:'へ',r:'he'},{k:'ほ',r:'ho'}] },
+    { row:'ま行', cat:'seion',   chars:[{k:'ま',r:'ma'},{k:'み',r:'mi'},{k:'む',r:'mu'},{k:'め',r:'me'},{k:'も',r:'mo'}] },
+    { row:'や行', cat:'seion',   chars:[{k:'や',r:'ya'},{k:'ゆ',r:'yu'},{k:'よ',r:'yo'}] },
+    { row:'ら行', cat:'seion',   chars:[{k:'ら',r:'ra'},{k:'り',r:'ri'},{k:'る',r:'ru'},{k:'れ',r:'re'},{k:'ろ',r:'ro'}] },
+    { row:'わ行', cat:'seion',   chars:[{k:'わ',r:'wa'},{k:'を',r:'wo'},{k:'ん',r:'n'}] },
     { row:'が行', cat:'dakuten', chars:[{k:'が',r:'ga'},{k:'ぎ',r:'gi'},{k:'ぐ',r:'gu'},{k:'げ',r:'ge'},{k:'ご',r:'go'}] },
     { row:'ざ行', cat:'dakuten', chars:[{k:'ざ',r:'za'},{k:'じ',r:'ji'},{k:'ず',r:'zu'},{k:'ぜ',r:'ze'},{k:'ぞ',r:'zo'}] },
     { row:'だ行', cat:'dakuten', chars:[{k:'だ',r:'da'},{k:'ぢ',r:'ji',p:false},{k:'づ',r:'zu',p:false},{k:'で',r:'de'},{k:'ど',r:'do'}] },
     { row:'ば行', cat:'dakuten', chars:[{k:'ば',r:'ba'},{k:'び',r:'bi'},{k:'ぶ',r:'bu'},{k:'べ',r:'be'},{k:'ぼ',r:'bo'}] },
-    // 半濁音
     { row:'ぱ行', cat:'dakuten', chars:[{k:'ぱ',r:'pa'},{k:'ぴ',r:'pi'},{k:'ぷ',r:'pu'},{k:'ぺ',r:'pe'},{k:'ぽ',r:'po'}] },
-    // 拗音 清音
-    { row:'きゃ行', cat:'yoon', chars:[{k:'きゃ',r:'kya'},{k:'きゅ',r:'kyu'},{k:'きょ',r:'kyo'}] },
-    { row:'しゃ行', cat:'yoon', chars:[{k:'しゃ',r:'sha'},{k:'しゅ',r:'shu'},{k:'しょ',r:'sho'}] },
-    { row:'ちゃ行', cat:'yoon', chars:[{k:'ちゃ',r:'cha'},{k:'ちゅ',r:'chu'},{k:'ちょ',r:'cho'}] },
-    { row:'にゃ行', cat:'yoon', chars:[{k:'にゃ',r:'nya'},{k:'にゅ',r:'nyu'},{k:'にょ',r:'nyo'}] },
-    { row:'ひゃ行', cat:'yoon', chars:[{k:'ひゃ',r:'hya'},{k:'ひゅ',r:'hyu'},{k:'ひょ',r:'hyo'}] },
-    { row:'みゃ行', cat:'yoon', chars:[{k:'みゃ',r:'mya'},{k:'みゅ',r:'myu'},{k:'みょ',r:'myo'}] },
-    { row:'りゃ行', cat:'yoon', chars:[{k:'りゃ',r:'rya'},{k:'りゅ',r:'ryu'},{k:'りょ',r:'ryo'}] },
-    // 拗音 濁音
-    { row:'ぎゃ行', cat:'yoon', chars:[{k:'ぎゃ',r:'gya'},{k:'ぎゅ',r:'gyu'},{k:'ぎょ',r:'gyo'}] },
-    { row:'じゃ行', cat:'yoon', chars:[{k:'じゃ',r:'ja'},{k:'じゅ',r:'ju'},{k:'じょ',r:'jo'}] },
-    { row:'びゃ行', cat:'yoon', chars:[{k:'びゃ',r:'bya'},{k:'びゅ',r:'byu'},{k:'びょ',r:'byo'}] },
-    { row:'ぴゃ行', cat:'yoon', chars:[{k:'ぴゃ',r:'pya'},{k:'ぴゅ',r:'pyu'},{k:'ぴょ',r:'pyo'}] },
+    { row:'きゃ行', cat:'yoon',  chars:[{k:'きゃ',r:'kya'},{k:'きゅ',r:'kyu'},{k:'きょ',r:'kyo'}] },
+    { row:'しゃ行', cat:'yoon',  chars:[{k:'しゃ',r:'sha'},{k:'しゅ',r:'shu'},{k:'しょ',r:'sho'}] },
+    { row:'ちゃ行', cat:'yoon',  chars:[{k:'ちゃ',r:'cha'},{k:'ちゅ',r:'chu'},{k:'ちょ',r:'cho'}] },
+    { row:'にゃ行', cat:'yoon',  chars:[{k:'にゃ',r:'nya'},{k:'にゅ',r:'nyu'},{k:'にょ',r:'nyo'}] },
+    { row:'ひゃ行', cat:'yoon',  chars:[{k:'ひゃ',r:'hya'},{k:'ひゅ',r:'hyu'},{k:'ひょ',r:'hyo'}] },
+    { row:'みゃ行', cat:'yoon',  chars:[{k:'みゃ',r:'mya'},{k:'みゅ',r:'myu'},{k:'みょ',r:'myo'}] },
+    { row:'りゃ行', cat:'yoon',  chars:[{k:'りゃ',r:'rya'},{k:'りゅ',r:'ryu'},{k:'りょ',r:'ryo'}] },
+    { row:'ぎゃ行', cat:'yoon',  chars:[{k:'ぎゃ',r:'gya'},{k:'ぎゅ',r:'gyu'},{k:'ぎょ',r:'gyo'}] },
+    { row:'じゃ行', cat:'yoon',  chars:[{k:'じゃ',r:'ja'},{k:'じゅ',r:'ju'},{k:'じょ',r:'jo'}] },
+    { row:'びゃ行', cat:'yoon',  chars:[{k:'びゃ',r:'bya'},{k:'びゅ',r:'byu'},{k:'びょ',r:'byo'}] },
+    { row:'ぴゃ行', cat:'yoon',  chars:[{k:'ぴゃ',r:'pya'},{k:'ぴゅ',r:'pyu'},{k:'ぴょ',r:'pyo'}] },
   ],
   katakana: [
-    // 清音
-    { row:'ア行', cat:'seion', chars:[{k:'ア',r:'a'},{k:'イ',r:'i'},{k:'ウ',r:'u'},{k:'エ',r:'e'},{k:'オ',r:'o'}] },
-    { row:'カ行', cat:'seion', chars:[{k:'カ',r:'ka'},{k:'キ',r:'ki'},{k:'ク',r:'ku'},{k:'ケ',r:'ke'},{k:'コ',r:'ko'}] },
-    { row:'サ行', cat:'seion', chars:[{k:'サ',r:'sa'},{k:'シ',r:'shi'},{k:'ス',r:'su'},{k:'セ',r:'se'},{k:'ソ',r:'so'}] },
-    { row:'タ行', cat:'seion', chars:[{k:'タ',r:'ta'},{k:'チ',r:'chi'},{k:'ツ',r:'tsu'},{k:'テ',r:'te'},{k:'ト',r:'to'}] },
-    { row:'ナ行', cat:'seion', chars:[{k:'ナ',r:'na'},{k:'ニ',r:'ni'},{k:'ヌ',r:'nu'},{k:'ネ',r:'ne'},{k:'ノ',r:'no'}] },
-    { row:'ハ行', cat:'seion', chars:[{k:'ハ',r:'ha'},{k:'ヒ',r:'hi'},{k:'フ',r:'fu'},{k:'ヘ',r:'he'},{k:'ホ',r:'ho'}] },
-    { row:'マ行', cat:'seion', chars:[{k:'マ',r:'ma'},{k:'ミ',r:'mi'},{k:'ム',r:'mu'},{k:'メ',r:'me'},{k:'モ',r:'mo'}] },
-    { row:'ヤ行', cat:'seion', chars:[{k:'ヤ',r:'ya'},{k:'ユ',r:'yu'},{k:'ヨ',r:'yo'}] },
-    { row:'ラ行', cat:'seion', chars:[{k:'ラ',r:'ra'},{k:'リ',r:'ri'},{k:'ル',r:'ru'},{k:'レ',r:'re'},{k:'ロ',r:'ro'}] },
-    { row:'ワ行', cat:'seion', chars:[{k:'ワ',r:'wa'},{k:'ヲ',r:'wo'},{k:'ン',r:'n'}] },
-    // 濁音
+    { row:'ア行', cat:'seion',   chars:[{k:'ア',r:'a'},{k:'イ',r:'i'},{k:'ウ',r:'u'},{k:'エ',r:'e'},{k:'オ',r:'o'}] },
+    { row:'カ行', cat:'seion',   chars:[{k:'カ',r:'ka'},{k:'キ',r:'ki'},{k:'ク',r:'ku'},{k:'ケ',r:'ke'},{k:'コ',r:'ko'}] },
+    { row:'サ行', cat:'seion',   chars:[{k:'サ',r:'sa'},{k:'シ',r:'shi'},{k:'ス',r:'su'},{k:'セ',r:'se'},{k:'ソ',r:'so'}] },
+    { row:'タ行', cat:'seion',   chars:[{k:'タ',r:'ta'},{k:'チ',r:'chi'},{k:'ツ',r:'tsu'},{k:'テ',r:'te'},{k:'ト',r:'to'}] },
+    { row:'ナ行', cat:'seion',   chars:[{k:'ナ',r:'na'},{k:'ニ',r:'ni'},{k:'ヌ',r:'nu'},{k:'ネ',r:'ne'},{k:'ノ',r:'no'}] },
+    { row:'ハ行', cat:'seion',   chars:[{k:'ハ',r:'ha'},{k:'ヒ',r:'hi'},{k:'フ',r:'fu'},{k:'ヘ',r:'he'},{k:'ホ',r:'ho'}] },
+    { row:'マ行', cat:'seion',   chars:[{k:'マ',r:'ma'},{k:'ミ',r:'mi'},{k:'ム',r:'mu'},{k:'メ',r:'me'},{k:'モ',r:'mo'}] },
+    { row:'ヤ行', cat:'seion',   chars:[{k:'ヤ',r:'ya'},{k:'ユ',r:'yu'},{k:'ヨ',r:'yo'}] },
+    { row:'ラ行', cat:'seion',   chars:[{k:'ラ',r:'ra'},{k:'リ',r:'ri'},{k:'ル',r:'ru'},{k:'レ',r:'re'},{k:'ロ',r:'ro'}] },
+    { row:'ワ行', cat:'seion',   chars:[{k:'ワ',r:'wa'},{k:'ヲ',r:'wo'},{k:'ン',r:'n'}] },
     { row:'ガ行', cat:'dakuten', chars:[{k:'ガ',r:'ga'},{k:'ギ',r:'gi'},{k:'グ',r:'gu'},{k:'ゲ',r:'ge'},{k:'ゴ',r:'go'}] },
     { row:'ザ行', cat:'dakuten', chars:[{k:'ザ',r:'za'},{k:'ジ',r:'ji'},{k:'ズ',r:'zu'},{k:'ゼ',r:'ze'},{k:'ゾ',r:'zo'}] },
     { row:'ダ行', cat:'dakuten', chars:[{k:'ダ',r:'da'},{k:'ヂ',r:'ji',p:false},{k:'ヅ',r:'zu',p:false},{k:'デ',r:'de'},{k:'ド',r:'do'}] },
     { row:'バ行', cat:'dakuten', chars:[{k:'バ',r:'ba'},{k:'ビ',r:'bi'},{k:'ブ',r:'bu'},{k:'ベ',r:'be'},{k:'ボ',r:'bo'}] },
-    // 半濁音
     { row:'パ行', cat:'dakuten', chars:[{k:'パ',r:'pa'},{k:'ピ',r:'pi'},{k:'プ',r:'pu'},{k:'ペ',r:'pe'},{k:'ポ',r:'po'}] },
-    // 拗音 清音
-    { row:'キャ行', cat:'yoon', chars:[{k:'キャ',r:'kya'},{k:'キュ',r:'kyu'},{k:'キョ',r:'kyo'}] },
-    { row:'シャ行', cat:'yoon', chars:[{k:'シャ',r:'sha'},{k:'シュ',r:'shu'},{k:'ショ',r:'sho'}] },
-    { row:'チャ行', cat:'yoon', chars:[{k:'チャ',r:'cha'},{k:'チュ',r:'chu'},{k:'チョ',r:'cho'}] },
-    { row:'ニャ行', cat:'yoon', chars:[{k:'ニャ',r:'nya'},{k:'ニュ',r:'nyu'},{k:'ニョ',r:'nyo'}] },
-    { row:'ヒャ行', cat:'yoon', chars:[{k:'ヒャ',r:'hya'},{k:'ヒュ',r:'hyu'},{k:'ヒョ',r:'hyo'}] },
-    { row:'ミャ行', cat:'yoon', chars:[{k:'ミャ',r:'mya'},{k:'ミュ',r:'myu'},{k:'ミョ',r:'myo'}] },
-    { row:'リャ行', cat:'yoon', chars:[{k:'リャ',r:'rya'},{k:'リュ',r:'ryu'},{k:'リョ',r:'ryo'}] },
-    // 拗音 濁音
-    { row:'ギャ行', cat:'yoon', chars:[{k:'ギャ',r:'gya'},{k:'ギュ',r:'gyu'},{k:'ギョ',r:'gyo'}] },
-    { row:'ジャ行', cat:'yoon', chars:[{k:'ジャ',r:'ja'},{k:'ジュ',r:'ju'},{k:'ジョ',r:'jo'}] },
-    { row:'ビャ行', cat:'yoon', chars:[{k:'ビャ',r:'bya'},{k:'ビュ',r:'byu'},{k:'ビョ',r:'byo'}] },
-    { row:'ピャ行', cat:'yoon', chars:[{k:'ピャ',r:'pya'},{k:'ピュ',r:'pyu'},{k:'ピョ',r:'pyo'}] },
+    { row:'キャ行', cat:'yoon',  chars:[{k:'キャ',r:'kya'},{k:'キュ',r:'kyu'},{k:'キョ',r:'kyo'}] },
+    { row:'シャ行', cat:'yoon',  chars:[{k:'シャ',r:'sha'},{k:'シュ',r:'shu'},{k:'ショ',r:'sho'}] },
+    { row:'チャ行', cat:'yoon',  chars:[{k:'チャ',r:'cha'},{k:'チュ',r:'chu'},{k:'チョ',r:'cho'}] },
+    { row:'ニャ行', cat:'yoon',  chars:[{k:'ニャ',r:'nya'},{k:'ニュ',r:'nyu'},{k:'ニョ',r:'nyo'}] },
+    { row:'ヒャ行', cat:'yoon',  chars:[{k:'ヒャ',r:'hya'},{k:'ヒュ',r:'hyu'},{k:'ヒョ',r:'hyo'}] },
+    { row:'ミャ行', cat:'yoon',  chars:[{k:'ミャ',r:'mya'},{k:'ミュ',r:'myu'},{k:'ミョ',r:'myo'}] },
+    { row:'リャ行', cat:'yoon',  chars:[{k:'リャ',r:'rya'},{k:'リュ',r:'ryu'},{k:'リョ',r:'ryo'}] },
+    { row:'ギャ行', cat:'yoon',  chars:[{k:'ギャ',r:'gya'},{k:'ギュ',r:'gyu'},{k:'ギョ',r:'gyo'}] },
+    { row:'ジャ行', cat:'yoon',  chars:[{k:'ジャ',r:'ja'},{k:'ジュ',r:'ju'},{k:'ジョ',r:'jo'}] },
+    { row:'ビャ行', cat:'yoon',  chars:[{k:'ビャ',r:'bya'},{k:'ビュ',r:'byu'},{k:'ビョ',r:'byo'}] },
+    { row:'ピャ行', cat:'yoon',  chars:[{k:'ピャ',r:'pya'},{k:'ピュ',r:'pyu'},{k:'ピョ',r:'pyo'}] },
   ]
 };
 
-// Table layout data (hardcoded with explicit kana to avoid romaji key collisions)
+// ── Vocabulary Data (大家說日文初級 Lesson 1–12) ───────────────────────
+const LESSONS = [
+  { l:1, title:'初めまして', words:[
+    {k:'わたし',r:'watashi',m:'我'},{k:'あなた',r:'anata',m:'你／您'},
+    {k:'せんせい',r:'sensei',m:'老師'},{k:'きょうし',r:'kyoushi',m:'教師'},
+    {k:'がくせい',r:'gakusei',m:'學生'},{k:'かいしゃいん',r:'kaishain',m:'公司職員'},
+    {k:'しゃいん',r:'shain',m:'社員'},{k:'ぎんこういん',r:'ginkouin',m:'銀行行員'},
+    {k:'いしゃ',r:'isha',m:'醫生'},{k:'けんきゅうしゃ',r:'kenkyuusha',m:'研究員'},
+    {k:'だいがく',r:'daigaku',m:'大學'},{k:'びょういん',r:'byouin',m:'醫院'},
+    {k:'なんさい',r:'nansai',m:'幾歲'},{k:'はい',r:'hai',m:'是／對'},{k:'いいえ',r:'iie',m:'不是'},
+  ]},
+  { l:2, title:'これからお世話になります', words:[
+    {k:'これ',r:'kore',m:'這個'},{k:'それ',r:'sore',m:'那個'},{k:'あれ',r:'are',m:'那個（遠）'},
+    {k:'ほん',r:'hon',m:'書'},{k:'じしょ',r:'jisho',m:'字典'},{k:'ざっし',r:'zasshi',m:'雜誌'},
+    {k:'しんぶん',r:'shinbun',m:'報紙'},{k:'ノート',r:'nooto',m:'筆記本'},{k:'めいし',r:'meishi',m:'名片'},
+    {k:'えんぴつ',r:'enpitsu',m:'鉛筆'},{k:'ボールペン',r:'boorupen',m:'原子筆'},{k:'かぎ',r:'kagi',m:'鑰匙'},
+    {k:'とけい',r:'tokei',m:'時鐘／手錶'},{k:'かさ',r:'kasa',m:'傘'},{k:'かばん',r:'kaban',m:'包包'},
+    {k:'テレビ',r:'terebi',m:'電視'},{k:'コンピューター',r:'konpyuutaa',m:'電腦'},{k:'くるま',r:'kuruma',m:'車'},
+    {k:'つくえ',r:'tsukue',m:'桌子'},{k:'いす',r:'isu',m:'椅子'},{k:'コーヒー',r:'koohii',m:'咖啡'},
+    {k:'なん',r:'nan',m:'什麼'},{k:'にほんご',r:'nihongo',m:'日語'},{k:'えいご',r:'eigo',m:'英語'},
+  ]},
+  { l:3, title:'これをください', words:[
+    {k:'ここ',r:'koko',m:'這裡'},{k:'そこ',r:'soko',m:'那裡'},{k:'あそこ',r:'asoko',m:'那裡（遠）'},
+    {k:'どこ',r:'doko',m:'哪裡'},{k:'きょうしつ',r:'kyoushitsu',m:'教室'},{k:'しょくどう',r:'shokudou',m:'食堂'},
+    {k:'じむしょ',r:'jimusho',m:'辦公室'},{k:'かいぎしつ',r:'kaigishitsu',m:'會議室'},{k:'トイレ',r:'toire',m:'廁所'},
+    {k:'でんわ',r:'denwa',m:'電話'},{k:'うち',r:'uchi',m:'家'},{k:'くつ',r:'kutsu',m:'鞋子'},
+    {k:'ネクタイ',r:'nekutai',m:'領帶'},{k:'いくら',r:'ikura',m:'多少錢'},{k:'ひゃく',r:'hyaku',m:'百'},
+    {k:'せん',r:'sen',m:'千'},{k:'まん',r:'man',m:'萬'},{k:'エレベーター',r:'erebeetaa',m:'電梯'},
+  ]},
+  { l:4, title:'そちらは何時まで', words:[
+    {k:'おきます',r:'okimasu',m:'起床'},{k:'ねます',r:'nemasu',m:'睡覺'},{k:'はたらきます',r:'hatarakimasu',m:'工作'},
+    {k:'やすみます',r:'yasumimasu',m:'休息'},{k:'べんきょうします',r:'benkyoushimasu',m:'念書'},{k:'おわります',r:'owarimasu',m:'結束'},
+    {k:'デパート',r:'depaato',m:'百貨公司'},{k:'ぎんこう',r:'ginkou',m:'銀行'},{k:'ゆうびんきょく',r:'yuubinkyoku',m:'郵局'},
+    {k:'としょかん',r:'toshokan',m:'圖書館'},{k:'びじゅつかん',r:'bijutsukan',m:'美術館'},{k:'ごぜん',r:'gozen',m:'上午'},
+    {k:'ごご',r:'gogo',m:'下午'},{k:'あさ',r:'asa',m:'早上'},{k:'ひる',r:'hiru',m:'中午'},
+    {k:'ばん',r:'ban',m:'晚上'},{k:'きのう',r:'kinou',m:'昨天'},{k:'きょう',r:'kyou',m:'今天'},
+    {k:'あした',r:'ashita',m:'明天'},{k:'まいにち',r:'mainichi',m:'每天'},{k:'げつようび',r:'getsuyoubi',m:'星期一'},
+    {k:'かようび',r:'kayoubi',m:'星期二'},{k:'すいようび',r:'suiyoubi',m:'星期三'},{k:'もくようび',r:'mokuyoubi',m:'星期四'},
+    {k:'きんようび',r:'kinyoubi',m:'星期五'},{k:'どようび',r:'doyoubi',m:'星期六'},{k:'にちようび',r:'nichiyoubi',m:'星期天'},
+  ]},
+  { l:5, title:'この電車は甲子園へ', words:[
+    {k:'いきます',r:'ikimasu',m:'去'},{k:'きます',r:'kimasu',m:'來'},{k:'かえります',r:'kaerimasu',m:'回去'},
+    {k:'がっこう',r:'gakkou',m:'學校'},{k:'えき',r:'eki',m:'車站'},{k:'ひこうき',r:'hikouki',m:'飛機'},
+    {k:'ふね',r:'fune',m:'船'},{k:'でんしゃ',r:'densha',m:'電車'},{k:'ちかてつ',r:'chikatetsu',m:'地下鐵'},
+    {k:'しんかんせん',r:'shinkansen',m:'新幹線'},{k:'バス',r:'basu',m:'公車'},{k:'タクシー',r:'takushii',m:'計程車'},
+    {k:'じてんしゃ',r:'jitensha',m:'腳踏車'},{k:'ともだち',r:'tomodachi',m:'朋友'},{k:'かぞく',r:'kazoku',m:'家人'},
+    {k:'たんじょうび',r:'tanjoubi',m:'生日'},{k:'せんしゅう',r:'senshuu',m:'上星期'},{k:'こんしゅう',r:'konshuu',m:'這星期'},
+    {k:'らいしゅう',r:'raishuu',m:'下星期'},{k:'きょねん',r:'kyonen',m:'去年'},{k:'ことし',r:'kotoshi',m:'今年'},
+    {k:'らいねん',r:'rainen',m:'明年'},{k:'ついたち',r:'tsuitachi',m:'1日'},{k:'ふつか',r:'futsuka',m:'2日'},
+    {k:'みっか',r:'mikka',m:'3日'},{k:'よっか',r:'yokka',m:'4日'},{k:'はつか',r:'hatsuka',m:'20日'},
+  ]},
+  { l:6, title:'いっしょに行きませんか', words:[
+    {k:'たべます',r:'tabemasu',m:'吃'},{k:'のみます',r:'nomimasu',m:'喝'},{k:'みます',r:'mimasu',m:'看'},
+    {k:'ききます',r:'kikimasu',m:'聽'},{k:'よみます',r:'yomimasu',m:'讀'},{k:'かきます',r:'kakimasu',m:'寫'},
+    {k:'かいます',r:'kaimasu',m:'買'},{k:'あさごはん',r:'asagohan',m:'早餐'},{k:'ひるごはん',r:'hirugohan',m:'午餐'},
+    {k:'ばんごはん',r:'bangohan',m:'晚餐'},{k:'パン',r:'pan',m:'麵包'},{k:'たまご',r:'tamago',m:'雞蛋'},
+    {k:'にく',r:'niku',m:'肉'},{k:'さかな',r:'sakana',m:'魚'},{k:'やさい',r:'yasai',m:'蔬菜'},
+    {k:'くだもの',r:'kudamono',m:'水果'},{k:'みず',r:'mizu',m:'水'},{k:'おちゃ',r:'ocha',m:'茶'},
+    {k:'こうちゃ',r:'koucha',m:'紅茶'},{k:'ビール',r:'biiru',m:'啤酒'},{k:'いっしょに',r:'issho ni',m:'一起'},
+    {k:'いつも',r:'itsumo',m:'總是'},{k:'ときどき',r:'tokidoki',m:'有時候'},{k:'わかりました',r:'wakarimashita',m:'我明白了'},
+  ]},
+  { l:7, title:'いらっしゃい', words:[
+    {k:'きります',r:'kirimasu',m:'切／剪'},{k:'おくります',r:'okurimasu',m:'寄／送'},{k:'あげます',r:'agemasu',m:'給'},
+    {k:'かします',r:'kashimasu',m:'借（出去）'},{k:'かります',r:'karimasu',m:'借（進來）'},{k:'おしえます',r:'oshiemasu',m:'教'},
+    {k:'ならいます',r:'naraimasu',m:'學習'},{k:'はし',r:'hashi',m:'筷子'},{k:'スプーン',r:'suupuun',m:'湯匙'},
+    {k:'ナイフ',r:'naifu',m:'刀子'},{k:'フォーク',r:'fooku',m:'叉子'},{k:'パソコン',r:'pasokon',m:'電腦'},
+    {k:'ケータイ',r:'keetai',m:'手機'},{k:'メール',r:'meeru',m:'電子郵件'},{k:'はな',r:'hana',m:'花'},
+    {k:'シャツ',r:'shatsu',m:'襯衫'},{k:'にもつ',r:'nimotsu',m:'行李'},{k:'おかね',r:'okane',m:'錢'},
+    {k:'クリスマス',r:'kurisumasu',m:'聖誕節'},{k:'ちち',r:'chichi',m:'父親（自己）'},{k:'はは',r:'haha',m:'母親（自己）'},
+    {k:'もう',r:'mou',m:'已經'},{k:'まだ',r:'mada',m:'還沒'},
+  ]},
+  { l:8, title:'そろそろ失礼します', words:[
+    {k:'きれい',r:'kirei',m:'漂亮／乾淨'},{k:'しずか',r:'shizuka',m:'安靜'},{k:'にぎやか',r:'nigiyaka',m:'熱鬧'},
+    {k:'ゆうめい',r:'yuumei',m:'有名'},{k:'しんせつ',r:'shinsetsu',m:'親切'},{k:'げんき',r:'genki',m:'健康／有精神'},
+    {k:'べんり',r:'benri',m:'方便'},{k:'おおきい',r:'ookii',m:'大'},{k:'ちいさい',r:'chiisai',m:'小'},
+    {k:'あたらしい',r:'atarashii',m:'新'},{k:'ふるい',r:'furui',m:'舊'},{k:'いい',r:'ii',m:'好'},
+    {k:'あつい',r:'atsui',m:'熱'},{k:'さむい',r:'samui',m:'冷'},{k:'むずかしい',r:'muzukashii',m:'難'},
+    {k:'やさしい',r:'yasashii',m:'容易／簡單'},{k:'たかい',r:'takai',m:'高／貴'},{k:'やすい',r:'yasui',m:'便宜'},
+    {k:'おもしろい',r:'omoshiroi',m:'有趣'},{k:'おいしい',r:'oishii',m:'好吃'},{k:'いそがしい',r:'isogashii',m:'忙'},
+    {k:'たのしい',r:'tanoshii',m:'開心'},{k:'しろい',r:'shiroi',m:'白色'},{k:'くろい',r:'kuroi',m:'黑色'},
+  ]},
+  { l:9, title:'残念ですが', words:[
+    {k:'わかります',r:'wakarimasu',m:'懂／明白'},{k:'すき',r:'suki',m:'喜歡'},{k:'きらい',r:'kirai',m:'不喜歡'},
+    {k:'じょうず',r:'jouzu',m:'擅長'},{k:'へた',r:'heta',m:'不擅長'},{k:'りょうり',r:'ryouri',m:'料理'},
+    {k:'スポーツ',r:'supootsu',m:'運動'},{k:'やきゅう',r:'yakyuu',m:'棒球'},{k:'りょこう',r:'ryokou',m:'旅行'},
+    {k:'おんがく',r:'ongaku',m:'音樂'},{k:'うた',r:'uta',m:'歌'},{k:'カラオケ',r:'karaoke',m:'卡拉OK'},
+    {k:'かんじ',r:'kanji',m:'漢字'},{k:'ひらがな',r:'hiragana',m:'平假名'},{k:'カタカナ',r:'katakana',m:'片假名'},
+    {k:'じかん',r:'jikan',m:'時間'},{k:'しゅじん',r:'shujin',m:'丈夫（別人）'},{k:'おくさん',r:'okusan',m:'妻子（別人）'},
+    {k:'こども',r:'kodomo',m:'小孩'},{k:'どうして',r:'doushite',m:'為什麼'},{k:'ようじ',r:'youji',m:'事情'},
+  ]},
+  { l:10, title:'ナンプラー、ありますか', words:[
+    {k:'あります',r:'arimasu',m:'有（東西）'},{k:'います',r:'imasu',m:'有（人／動物）'},
+    {k:'いぬ',r:'inu',m:'狗'},{k:'ねこ',r:'neko',m:'貓'},{k:'き',r:'ki',m:'樹木'},
+    {k:'れいぞうこ',r:'reizouko',m:'冰箱'},{k:'テーブル',r:'teebyuru',m:'桌子'},{k:'ベッド',r:'beddo',m:'床'},
+    {k:'ドア',r:'doa',m:'門'},{k:'まど',r:'mado',m:'窗戶'},{k:'コンビニ',r:'konbini',m:'便利商店'},
+    {k:'こうえん',r:'kouen',m:'公園'},{k:'きっさてん',r:'kissaten',m:'咖啡廳'},{k:'うえ',r:'ue',m:'上'},
+    {k:'した',r:'shita',m:'下'},{k:'まえ',r:'mae',m:'前'},{k:'うしろ',r:'ushiro',m:'後'},
+    {k:'みぎ',r:'migi',m:'右'},{k:'ひだり',r:'hidari',m:'左'},{k:'なか',r:'naka',m:'裡面'},
+    {k:'そと',r:'soto',m:'外面'},{k:'となり',r:'tonari',m:'旁邊'},{k:'ちかく',r:'chikaku',m:'附近'},
+  ]},
+  { l:11, title:'これ、お願いします', words:[
+    {k:'かかります',r:'kakarimasu',m:'花費（時間／金錢）'},{k:'りんご',r:'ringo',m:'蘋果'},{k:'みかん',r:'mikan',m:'橘子'},
+    {k:'きって',r:'kitte',m:'郵票'},{k:'はがき',r:'hagaki',m:'明信片'},{k:'ふうとう',r:'fuutou',m:'信封'},
+    {k:'りょうしん',r:'ryoushin',m:'父母'},{k:'きょうだい',r:'kyoudai',m:'兄弟姐妹'},{k:'あに',r:'ani',m:'哥哥（自己）'},
+    {k:'おにいさん',r:'oniisan',m:'哥哥（別人）'},{k:'あね',r:'ane',m:'姊姊（自己）'},{k:'おねえさん',r:'oneesan',m:'姊姊（別人）'},
+    {k:'おとうと',r:'otouto',m:'弟弟（自己）'},{k:'いもうと',r:'imouto',m:'妹妹（自己）'},
+    {k:'りゅうがくせい',r:'ryuugakusei',m:'留學生'},{k:'みな',r:'mina',m:'大家'},
+    {k:'ひとつ',r:'hitotsu',m:'一個'},{k:'ふたつ',r:'futatsu',m:'兩個'},{k:'みっつ',r:'mittsu',m:'三個'},
+    {k:'よっつ',r:'yottsu',m:'四個'},{k:'いつつ',r:'itsutsu',m:'五個'},
+  ]},
+  { l:12, title:'祇園祭はどうでしたか', words:[
+    {k:'かんたん',r:'kantan',m:'簡單'},{k:'ちかい',r:'chikai',m:'近'},{k:'とおい',r:'tooi',m:'遠'},
+    {k:'はやい',r:'hayai',m:'快／早'},{k:'おそい',r:'osoi',m:'慢'},{k:'あたたかい',r:'atatakai',m:'溫暖'},
+    {k:'すずしい',r:'suzushii',m:'涼快'},{k:'あまい',r:'amai',m:'甜'},{k:'からい',r:'karai',m:'辣'},
+    {k:'おもい',r:'omoi',m:'重'},{k:'かるい',r:'karui',m:'輕'},{k:'きせつ',r:'kisetsu',m:'季節'},
+    {k:'はる',r:'haru',m:'春天'},{k:'なつ',r:'natsu',m:'夏天'},{k:'あき',r:'aki',m:'秋天'},
+    {k:'ふゆ',r:'fuyu',m:'冬天'},{k:'てんき',r:'tenki',m:'天氣'},{k:'あめ',r:'ame',m:'雨'},
+    {k:'ゆき',r:'yuki',m:'雪'},{k:'ホテル',r:'hoteru',m:'飯店'},{k:'うみ',r:'umi',m:'海'},
+    {k:'せかい',r:'sekai',m:'世界'},{k:'はじめて',r:'hajimete',m:'第一次'},
+  ]},
+];
+
+// ── Table Data ─────────────────────────────────────────────────────────
 const TBL_SEION = {
   hiragana: [
     { label:'あ', cells:[{k:'あ',r:'a'},{k:'い',r:'i'},{k:'う',r:'u'},{k:'え',r:'e'},{k:'お',r:'o'}] },
@@ -265,7 +469,6 @@ const TBL_SEION = {
     { label:'ン', cells:[{k:'ン',r:'n'},null,null,null,null] },
   ]
 };
-
 const TBL_DAKUTEN = {
   hiragana: [
     { label:'が', cells:[{k:'が',r:'ga'},{k:'ぎ',r:'gi'},{k:'ぐ',r:'gu'},{k:'げ',r:'ge'},{k:'ご',r:'go'}] },
@@ -282,7 +485,6 @@ const TBL_DAKUTEN = {
     { label:'パ', cells:[{k:'パ',r:'pa'},{k:'ピ',r:'pi'},{k:'プ',r:'pu'},{k:'ペ',r:'pe'},{k:'ポ',r:'po'}] },
   ]
 };
-
 const TBL_YOON = {
   hiragana: [
     { label:'き', cells:[{k:'きゃ',r:'kya'},{k:'きゅ',r:'kyu'},{k:'きょ',r:'kyo'}] },
@@ -312,268 +514,355 @@ const TBL_YOON = {
   ]
 };
 
-// ── State ─────────────────────────────────────────────────────────────
+// ── State ──────────────────────────────────────────────────────────────
 let currentType = 'hiragana';
 let tableType   = 'hiragana';
+let homeMode    = 'kana';   // 'kana' | 'vocab'
 let session     = {};
 
-// ── Progress ──────────────────────────────────────────────────────────
-function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('kana_v2') || '{}'); } catch { return {}; }
+// ── Progress ───────────────────────────────────────────────────────────
+function loadProg() { try { return JSON.parse(localStorage.getItem('kana_v3')||'{}'); } catch{return{};} }
+function saveProg(ns, key, correct, total) {
+  const p = loadProg();
+  if (!p[ns]) p[ns] = {};
+  if (!p[ns][key]) p[ns][key] = {practiced:0,correct:0,total:0};
+  p[ns][key].practiced++; p[ns][key].correct+=correct; p[ns][key].total+=total;
+  localStorage.setItem('kana_v3', JSON.stringify(p));
 }
-function recordProgress(type, rowName, correct, total) {
-  const p = loadProgress();
-  if (!p[type]) p[type] = {};
-  if (!p[type][rowName]) p[type][rowName] = { practiced:0, correct:0, total:0 };
-  p[type][rowName].practiced++;
-  p[type][rowName].correct += correct;
-  p[type][rowName].total   += total;
-  localStorage.setItem('kana_v2', JSON.stringify(p));
-}
+function statFor(ns, key) { return loadProg()[ns]?.[key] || null; }
 
-// ── Nav ───────────────────────────────────────────────────────────────
+// ── Nav ────────────────────────────────────────────────────────────────
 function go(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (id === 's-home')  renderHome();
-  if (id === 's-table') renderTable();
+  if (id === 's-home')       { homeMode==='kana' ? renderKanaHome() : renderVocabHome(); }
+  if (id === 's-table')      renderTable();
+  if (id === 's-vocab-list') renderVocabList();
 }
 
-// ── Home ──────────────────────────────────────────────────────────────
-function setType(type) {
-  currentType = type;
-  const isHira = type === 'hiragana';
-  document.getElementById('home-hira').classList.toggle('active', isHira);
-  document.getElementById('home-kata').classList.toggle('active', !isHira);
-  document.getElementById('all-btn').className = `btn-primary ${isHira ? 'hira' : 'kata'}`;
-  renderHome();
+// ── Home ───────────────────────────────────────────────────────────────
+function setHomeMode(mode) {
+  homeMode = mode;
+  document.getElementById('hm-kana').className  = 'hm-btn' + (mode==='kana'  ? ' active-kana'  : '');
+  document.getElementById('hm-vocab').className = 'hm-btn' + (mode==='vocab' ? ' active-vocab' : '');
+  document.getElementById('home-kana-section').style.display  = mode==='kana'  ? '' : 'none';
+  document.getElementById('home-vocab-section').style.display = mode==='vocab' ? '' : 'none';
+  if (mode==='kana') renderKanaHome(); else renderVocabHome();
 }
 
 const CAT_LABELS = { seion:'清音', dakuten:'濁音・半濁音', yoon:'拗音' };
 
-function renderHome() {
-  const prog = loadProgress();
-  const grid = document.getElementById('row-grid');
-  grid.innerHTML = '';
-  let lastCat = null;
+function setKanaType(type) {
+  currentType = type;
+  document.getElementById('home-hira').classList.toggle('active', type==='hiragana');
+  document.getElementById('home-kata').classList.toggle('active', type==='katakana');
+  document.getElementById('all-btn').className = `btn-primary ${type==='hiragana'?'hira':'kata'}`;
+  renderKanaHome();
+}
 
-  ROWS[currentType].forEach(({ row, cat, chars }) => {
+function renderKanaHome() {
+  const prog = loadProg(); const grid = document.getElementById('row-grid');
+  grid.innerHTML = ''; let lastCat = null;
+  ROWS[currentType].forEach(({row,cat}) => {
     if (cat !== lastCat) {
-      const lbl = document.createElement('div');
-      lbl.className = 'sec-label';
-      lbl.textContent = CAT_LABELS[cat];
-      grid.appendChild(lbl);
-      lastCat = cat;
+      const lbl = document.createElement('div'); lbl.className='sec-label';
+      lbl.textContent = CAT_LABELS[cat]; grid.appendChild(lbl); lastCat=cat;
     }
-    const stat = prog[currentType]?.[row];
-    let statText = '尚未練習', statClass = '';
-    if (stat?.total > 0) {
-      const pct = Math.round(stat.correct / stat.total * 100);
-      statText = `${pct}% 正確・${stat.practiced} 次`;
-      statClass = pct >= 80 ? 'good' : pct < 60 ? 'bad' : '';
+    const stat = prog['kana_'+currentType]?.[row];
+    let txt='尚未練習', cls='';
+    if (stat?.total>0) {
+      const pct=Math.round(stat.correct/stat.total*100);
+      txt=`${pct}% · ${stat.practiced}次`; cls=pct>=80?'good':pct<60?'bad':'';
     }
-    const btn = document.createElement('button');
-    btn.className = 'row-btn';
-    btn.innerHTML = `<span class="row-name">${row}</span><span class="row-stat ${statClass}">${statText}</span>`;
-    btn.onclick = () => startPractice(row);
-    grid.appendChild(btn);
+    const btn=document.createElement('button'); btn.className='row-btn';
+    btn.innerHTML=`<span class="row-name">${row}</span><span class="row-stat ${cls}">${txt}</span>`;
+    btn.onclick=()=>startKanaPractice(row); grid.appendChild(btn);
   });
 }
 
-// ── Table ─────────────────────────────────────────────────────────────
+function renderVocabHome() {
+  const prog = loadProg(); const grid = document.getElementById('lesson-grid');
+  grid.innerHTML = '';
+  LESSONS.forEach(({l, title, words}) => {
+    const key = 'vocab_'+l;
+    const stat = prog[key];
+    let txt='尚未練習', cls='';
+    if (stat?.total>0) {
+      const pct=Math.round(stat.correct/stat.total*100);
+      txt=`${pct}% · ${stat.practiced}次`; cls=pct>=80?'good':pct<60?'bad':'';
+    }
+    const btn=document.createElement('button'); btn.className='lesson-btn';
+    btn.innerHTML=`<span class="lesson-num">第${l}課</span><span class="lesson-title">${title}</span><span class="lesson-stat ${cls}">${txt}</span>`;
+    btn.onclick=()=>startVocabPractice(l); grid.appendChild(btn);
+  });
+}
+
+// ── Table ──────────────────────────────────────────────────────────────
 function setTableType(type) {
-  tableType = type;
-  document.getElementById('tbl-hira').classList.toggle('active', type === 'hiragana');
-  document.getElementById('tbl-kata').classList.toggle('active', type === 'katakana');
+  tableType=type;
+  document.getElementById('tbl-hira').classList.toggle('active', type==='hiragana');
+  document.getElementById('tbl-kata').classList.toggle('active', type==='katakana');
   renderTable();
 }
-
 function makeTblCell(c) {
   if (!c) return '<td></td>';
-  const romClass = c.arc ? ' arc' : '';
-  const romLabel = c.arc ? `${c.r}*` : c.r;
+  const rc = c.arc?' arc':'';
+  const rl = c.arc?`${c.r}*`:c.r;
   return `<td><div class="kana-cell" onclick="tblClick(this,'${c.k}')">
-    <span class="k-char">${c.k}</span>
-    <span class="k-rom${romClass}">${romLabel}</span>
+    <span class="k-char">${c.k}</span><span class="k-rom${rc}">${rl}</span>
   </div></td>`;
 }
-
 function makeTable(layout, cols) {
-  const colHeaders = cols === 5
+  const hdr = cols===5
     ? '<th></th><th>a</th><th>i</th><th>u</th><th>e</th><th>o</th>'
     : '<th></th><th>ya</th><th>yu</th><th>yo</th>';
-  let html = `<table class="kana-table"><thead><tr>${colHeaders}</tr></thead><tbody>`;
-  layout.forEach(({ label, cells }) => {
-    html += `<tr><th>${label}</th>`;
-    cells.forEach(c => { html += makeTblCell(c); });
-    html += '</tr>';
+  let h=`<table class="kana-table"><thead><tr>${hdr}</tr></thead><tbody>`;
+  layout.forEach(({label,cells})=>{
+    h+=`<tr><th>${label}</th>`;
+    cells.forEach(c=>{ h+=makeTblCell(c); }); h+='</tr>';
   });
-  return html + '</tbody></table>';
+  return h+'</tbody></table>';
 }
-
 function renderTable() {
-  const t = tableType;
-  document.getElementById('table-container').innerHTML =
-    `<div class="tbl-section">
-       <div class="tbl-section-title">清音</div>
-       ${makeTable(TBL_SEION[t], 5)}
-     </div>
-     <div class="tbl-section">
-       <div class="tbl-section-title">濁音・半濁音　<small style="font-size:0.65rem;letter-spacing:0">（*ぢ・づ 與 じ・ず 同音）</small></div>
-       ${makeTable(TBL_DAKUTEN[t], 5)}
-     </div>
-     <div class="tbl-section">
-       <div class="tbl-section-title">拗音</div>
-       ${makeTable(TBL_YOON[t], 3)}
-     </div>`;
+  const t=tableType;
+  document.getElementById('table-container').innerHTML=
+    `<div class="tbl-section"><div class="tbl-section-title">清音</div>${makeTable(TBL_SEION[t],5)}</div>
+     <div class="tbl-section"><div class="tbl-section-title">濁音・半濁音 <small style="font-size:0.65rem;letter-spacing:0">（*ぢ・づ 與 じ・ず 同音）</small></div>${makeTable(TBL_DAKUTEN[t],5)}</div>
+     <div class="tbl-section"><div class="tbl-section-title">拗音</div>${makeTable(TBL_YOON[t],3)}</div>`;
+}
+function tblClick(el,kana) {
+  document.querySelectorAll('.kana-cell.lit').forEach(e=>e.classList.remove('lit'));
+  el.classList.add('lit'); speak(kana);
+  el.classList.add('playing'); setTimeout(()=>el.classList.remove('playing'),800);
 }
 
-function tblClick(el, kana) {
-  document.querySelectorAll('.kana-cell.lit').forEach(e => e.classList.remove('lit'));
-  el.classList.add('lit');
-  speak(kana);
-  el.classList.add('playing');
-  setTimeout(() => el.classList.remove('playing'), 800);
-}
-
-// ── Practice ──────────────────────────────────────────────────────────
-function allChars(type) {
-  return ROWS[type || currentType].flatMap(r =>
-    r.chars.filter(c => c.p !== false).map(c => ({ ...c, row: r.row, cat: r.cat }))
-  );
-}
-
+// ── Helpers ────────────────────────────────────────────────────────────
 function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+  for (let i=arr.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];
   }
   return arr;
 }
+function allKanaChars(type) {
+  return ROWS[type||currentType].flatMap(r=>
+    r.chars.filter(c=>c.p!==false).map(c=>({...c,row:r.row,cat:r.cat}))
+  );
+}
 
-function buildQuestions(pool) {
-  const count = pool.length <= 3 ? pool.length * 2 : 10;
+// ── Kana Practice ──────────────────────────────────────────────────────
+function buildKanaQuestions(pool) {
+  const count = pool.length<=3 ? pool.length*2 : 10;
   const base = shuffle([...pool]);
-  const qs = Array.from({ length: count }, (_, i) => ({
-    char: base[i % base.length],
-    mode: Math.random() < 0.5 ? 'reading' : 'writing'
-  }));
-  return shuffle(qs);
+  return shuffle(Array.from({length:count},(_,i)=>({
+    char: base[i%base.length],
+    mode: Math.random()<0.5 ? 'reading' : 'writing'
+  })));
 }
-
-function getDistractors(q, all) {
-  const sameCat = all.filter(c => c.cat === q.char.cat && c.r !== q.char.r);
-  const pool = sameCat.length >= 3 ? sameCat : all.filter(c => c.r !== q.char.r);
-  return shuffle(pool).slice(0, 3);
-}
-
-function startPractice(rowName) {
-  const rowDef = rowName ? ROWS[currentType].find(r => r.row === rowName) : null;
+function startKanaPractice(rowName) {
+  const rowDef = rowName ? ROWS[currentType].find(r=>r.row===rowName) : null;
   const pool = rowName
-    ? (rowDef?.chars.filter(c => c.p !== false).map(c => ({ ...c, row: rowName, cat: rowDef.cat })) || [])
-    : allChars();
+    ? (rowDef?.chars.filter(c=>c.p!==false).map(c=>({...c,row:rowName,cat:rowDef.cat}))||[])
+    : allKanaChars();
   if (!pool.length) return;
-
-  session = { type: currentType, rowName, questions: buildQuestions(pool), index: 0, score: 0, missed: [] };
-
-  const isHira = currentType === 'hiragana';
-  document.getElementById('prog-fill').className = `prog-fill ${isHira ? '' : 'kata'}`;
-  document.getElementById('retry-btn').className  = `btn-primary ${isHira ? 'hira' : 'kata'}`;
-
-  go('s-practice');
-  renderQuestion();
+  session = {
+    isVocab:false, type:currentType, rowName,
+    questions:buildKanaQuestions(pool), index:0, score:0, missed:[]
+  };
+  const isHira = currentType==='hiragana';
+  document.getElementById('prog-fill').className = `prog-fill ${isHira?'':'kata'}`;
+  document.getElementById('retry-btn').className  = `btn-primary ${isHira?'hira':'kata'}`;
+  go('s-practice'); renderQuestion();
 }
 
+// ── Vocab Practice ─────────────────────────────────────────────────────
+function buildVocabQuestions(pool) {
+  const count = Math.min(10, pool.length);
+  const base = shuffle([...pool]);
+  return shuffle(Array.from({length:count},(_,i)=>({
+    char: base[i%base.length],
+    mode: Math.random()<0.5 ? 'reading' : 'writing'
+    // reading: show JP → choose CN
+    // writing: show CN → choose JP
+  })));
+}
+function startVocabPractice(lessonNum) {
+  const pool = lessonNum
+    ? (LESSONS.find(l=>l.l===lessonNum)?.words.map(w=>({...w,lesson:lessonNum}))||[])
+    : LESSONS.flatMap(l=>l.words.map(w=>({...w,lesson:l.l})));
+  if (!pool.length) return;
+  session = {
+    isVocab:true, lessonNum,
+    questions:buildVocabQuestions(pool), index:0, score:0, missed:[]
+  };
+  document.getElementById('prog-fill').className = 'prog-fill vocab';
+  document.getElementById('retry-btn').className  = 'btn-primary vocab';
+  go('s-practice'); renderQuestion();
+}
+
+// ── Render Question ─────────────────────────────────────────────────────
 let speakTimer = null;
 function renderQuestion() {
-  const { questions, index } = session;
+  const {questions, index, isVocab} = session;
   const total = questions.length;
   const q = questions[index];
+  document.getElementById('prog-fill').style.width = `${(index/total)*100}%`;
+  document.getElementById('prog-label').textContent = `${index+1} / ${total}`;
 
-  document.getElementById('prog-fill').style.width = `${(index / total) * 100}%`;
-  document.getElementById('prog-label').textContent = `${index + 1} / ${total}`;
+  if (isVocab) renderVocabQuestion(q);
+  else         renderKanaQuestion(q);
+
+  clearTimeout(speakTimer);
+  speakTimer = setTimeout(()=>speak(q.char.k), 400);
+}
+
+function renderKanaQuestion(q) {
   document.getElementById('mode-tag').textContent =
-    q.mode === 'reading' ? '認字模式 — 看假名，選出讀音' : '識字模式 — 看讀音，選出假名';
-
-  document.getElementById('q-area').innerHTML = q.mode === 'reading'
+    q.mode==='reading' ? '認字模式 — 看假名，選出讀音' : '識字模式 — 看讀音，選出假名';
+  document.getElementById('q-area').innerHTML = q.mode==='reading'
     ? `<div class="q-char">${q.char.k}</div><div class="q-hint">點此重播發音</div>`
     : `<div class="q-text">${q.char.r}</div><div class="q-hint">點此重播發音</div>`;
 
-  const all = allChars();
-  const choices = shuffle([q.char, ...getDistractors(q, all)]);
+  const all = allKanaChars();
+  const sameCat = all.filter(c=>c.cat===q.char.cat && c.r!==q.char.r);
+  const dist = shuffle(sameCat.length>=3 ? sameCat : all.filter(c=>c.r!==q.char.r)).slice(0,3);
+  const choices = shuffle([q.char, ...dist]);
 
-  const el = document.getElementById('choices');
-  el.innerHTML = '';
-  choices.forEach(ch => {
-    const btn = document.createElement('button');
-    btn.className = 'choice-btn';
-    btn.textContent = q.mode === 'reading' ? ch.r : ch.k;
-    btn.onclick = () => answer(btn, ch, q, el);
+  const el = document.getElementById('choices'); el.innerHTML='';
+  choices.forEach(ch=>{
+    const btn=document.createElement('button'); btn.className='choice-btn';
+    btn.textContent = q.mode==='reading' ? ch.r : ch.k;
+    btn.onclick=()=>answer(btn, ch, q, el, false);
     el.appendChild(btn);
   });
-
-  clearTimeout(speakTimer);
-  speakTimer = setTimeout(() => speak(q.char.k), 400);
 }
 
-function answer(btn, chosen, q, choicesEl) {
-  choicesEl.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
-  const isCorrect = q.mode === 'reading' ? chosen.r === q.char.r : chosen.k === q.char.k;
+function renderVocabQuestion(q) {
+  document.getElementById('mode-tag').textContent =
+    q.mode==='reading' ? '單字模式 — 看日文，選出中文意思' : '單字模式 — 看中文，選出日文';
+  document.getElementById('q-area').innerHTML = q.mode==='reading'
+    ? `<div class="q-vocab-jp">${q.char.k}</div><div class="q-hint">點此重播發音</div>`
+    : `<div class="q-vocab-cn">${q.char.m}</div><div class="q-hint">點此重播發音</div>`;
 
-  if (isCorrect) {
-    btn.classList.add('correct');
-    session.score++;
+  // distractors: prefer same lesson
+  const all = session.lessonNum
+    ? (LESSONS.find(l=>l.l===session.lessonNum)?.words||[])
+    : LESSONS.flatMap(l=>l.words);
+  const dist = shuffle(all.filter(w=>w.k!==q.char.k)).slice(0,3);
+  const choices = shuffle([q.char, ...dist]);
+
+  const el=document.getElementById('choices'); el.innerHTML='';
+  choices.forEach(ch=>{
+    const btn=document.createElement('button'); btn.className='choice-btn vocab-choice';
+    btn.textContent = q.mode==='reading' ? ch.m : ch.k;
+    btn.onclick=()=>answer(btn, ch, q, el, true);
+    el.appendChild(btn);
+  });
+}
+
+// ── Answer ─────────────────────────────────────────────────────────────
+function answer(btn, chosen, q, choicesEl, isVocab) {
+  choicesEl.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  let isCorrect;
+  if (isVocab) {
+    isCorrect = q.mode==='reading' ? chosen.m===q.char.m : chosen.k===q.char.k;
   } else {
+    isCorrect = q.mode==='reading' ? chosen.r===q.char.r : chosen.k===q.char.k;
+  }
+  if (isCorrect) { btn.classList.add('correct'); session.score++; }
+  else {
     btn.classList.add('wrong');
-    const correctVal = q.mode === 'reading' ? q.char.r : q.char.k;
-    choicesEl.querySelectorAll('.choice-btn').forEach(b => {
-      if (b.textContent === correctVal) b.classList.add('reveal');
-    });
+    const cv = isVocab ? (q.mode==='reading' ? q.char.m : q.char.k)
+                       : (q.mode==='reading' ? q.char.r : q.char.k);
+    choicesEl.querySelectorAll('.choice-btn').forEach(b=>{ if(b.textContent===cv) b.classList.add('reveal'); });
     session.missed.push(q.char);
   }
-
   speak(q.char.k);
-
-  setTimeout(() => {
+  setTimeout(()=>{
     session.index++;
-    session.index >= session.questions.length ? finishPractice() : renderQuestion();
+    session.index>=session.questions.length ? finishPractice() : renderQuestion();
   }, 1000);
 }
 
+// ── Finish ─────────────────────────────────────────────────────────────
 function finishPractice() {
-  if (session.rowName) recordProgress(session.type, session.rowName, session.score, session.questions.length);
+  if (session.isVocab && session.lessonNum)
+    saveProg('vocab_'+session.lessonNum, 'vocab_'+session.lessonNum, session.score, session.questions.length);
+  else if (!session.isVocab && session.rowName)
+    saveProg('kana_'+session.type, session.rowName, session.score, session.questions.length);
 
-  const total = session.questions.length;
-  const pct = Math.round(session.score / total * 100);
+  const total=session.questions.length;
+  const pct=Math.round(session.score/total*100);
   document.getElementById('r-score').textContent = session.score;
   document.getElementById('r-denom').textContent = ` / ${total}`;
   document.getElementById('r-msg').textContent =
-    pct === 100 ? '完美，全對！' : pct >= 80 ? '很不錯！繼續保持' : pct >= 60 ? '不錯，再練幾次更紮實' : '多練幾次，你可以的！';
+    pct===100?'完美，全對！':pct>=80?'很不錯！繼續保持':pct>=60?'不錯，再練幾次更紮實':'多練幾次，你可以的！';
 
-  const missedEl = document.getElementById('missed-wrap');
+  const el=document.getElementById('missed-wrap');
   if (!session.missed.length) {
-    missedEl.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px 0">全部答對！</p>';
+    el.innerHTML='<p style="text-align:center;color:var(--muted);padding:20px 0">全部答對！</p>';
   } else {
-    const unique = [...new Map(session.missed.map(m => [m.k, m])).values()];
-    missedEl.innerHTML = '<h3>答錯的字</h3>' + unique.map(m =>
-      `<div class="missed-item" onclick="speak('${m.k}')">
+    const unique=[...new Map(session.missed.map(m=>[m.k,m])).values()];
+    el.innerHTML='<h3>答錯的字</h3>'+unique.map(m=>{
+      const sub = session.isVocab ? m.m : m.r;
+      return `<div class="missed-item" onclick="speak('${m.k}')">
         <span class="m-kana">${m.k}</span>
         <span class="m-arrow">↔</span>
-        <span class="m-rom">${m.r}</span>
-      </div>`
-    ).join('');
+        <span class="m-rom">${sub}</span>
+      </div>`;
+    }).join('');
   }
-
   go('s-result');
 }
 
 function retry() {
-  currentType = session.type;
-  startPractice(session.rowName);
+  if (session.isVocab) { currentType='hiragana'; startVocabPractice(session.lessonNum); }
+  else { currentType=session.type; startKanaPractice(session.rowName); }
 }
 
-// ── Init ──────────────────────────────────────────────────────────────
-renderHome();
+// ── Vocab List ─────────────────────────────────────────────────────────
+const collapsedLessons = new Set();
+
+function renderVocabList() {
+  const container = document.getElementById('vocab-list-container');
+  container.innerHTML = LESSONS.map(({l, title, words}) => {
+    const isOpen = !collapsedLessons.has(l);
+    const wordRows = words.map(w =>
+      `<div class="vl-word" onclick="speak('${w.k.replace(/'/g,"\\'")}')">
+        <div class="vl-jp-block">
+          <span class="vl-jp">${w.k}</span>
+          <span class="vl-rom">${w.r}</span>
+        </div>
+        <span class="vl-sep">→</span>
+        <span class="vl-cn">${w.m}</span>
+        <span class="vl-sound">♪</span>
+      </div>`
+    ).join('');
+    return `<div class="vl-lesson">
+      <div class="vl-lesson-hd" onclick="toggleLesson(${l})">
+        <div class="vl-lesson-hd-left">
+          <span class="vl-lnum">第${l}課</span>
+          <span class="vl-ltitle">${title}</span>
+        </div>
+        <span class="vl-toggle" id="vl-toggle-${l}">${isOpen ? '▲' : '▼'}</span>
+      </div>
+      <div class="vl-words" id="vl-words-${l}" style="display:${isOpen?'block':'none'}">${wordRows}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleLesson(l) {
+  if (collapsedLessons.has(l)) collapsedLessons.delete(l);
+  else collapsedLessons.add(l);
+  const el = document.getElementById('vl-words-'+l);
+  const arrow = document.getElementById('vl-toggle-'+l);
+  const isOpen = !collapsedLessons.has(l);
+  el.style.display = isOpen ? 'block' : 'none';
+  arrow.textContent = isOpen ? '▲' : '▼';
+}
+
+// ── Init ───────────────────────────────────────────────────────────────
+renderKanaHome();
+document.querySelectorAll('.speed-btn').forEach(b=>{ b.textContent=RATE_LABELS[speechRateIdx]; });
 </script>
 </body>
 </html>
