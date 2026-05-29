@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>假名練習</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #f0f4f8; --card: #ffffff; --card2: #e8edf3;
+  --accent: #d63651; --accent-kata: #2563eb;
+  --correct: #16a34a; --wrong: #dc2626;
+  --text: #111827; --muted: #6b7280;
+}
+html, body { height: 100%; background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow-x: hidden; }
+.screen { display: none; flex-direction: column; min-height: 100vh; padding-bottom: 32px; animation: fadeIn 0.2s ease; }
+.screen.active { display: flex; }
+@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+
+/* ── Shared ── */
+.header { display:flex; align-items:center; gap:12px; padding:16px 20px; border-bottom:1px solid #e2e8f0; background:var(--card); }
+.header h1 { font-size:1.1rem; font-weight:600; }
+.back-btn { background:none; border:none; color:var(--text); font-size:1.5rem; cursor:pointer; padding:4px 8px; line-height:1; }
+.type-toggle { display:flex; margin:16px 20px 0; background:var(--card2); border-radius:12px; padding:4px; }
+.type-btn { flex:1; padding:10px; border:none; border-radius:8px; background:none; color:var(--muted); font-size:1rem; cursor:pointer; transition:all 0.2s; }
+.type-btn.hira.active { background:var(--accent); color:#fff; font-weight:600; }
+.type-btn.kata.active { background:var(--accent-kata); color:#fff; font-weight:600; }
+.btn-primary { width:100%; padding:16px; border:none; border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; min-height:56px; transition:opacity 0.15s; }
+.btn-primary:active { opacity:0.8; }
+.btn-primary.hira { background:var(--accent); color:#fff; }
+.btn-primary.kata { background:var(--accent-kata); color:#fff; }
+.btn-secondary { width:100%; padding:14px; background:var(--card); color:var(--text); border:1px solid #e2e8f0; border-radius:12px; font-size:1rem; cursor:pointer; min-height:56px; }
+.bottom-actions { padding:0 20px; display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+
+/* ── Home ── */
+.row-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:16px 20px; }
+.sec-label { grid-column:1/-1; font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em;
+  padding:8px 4px 2px; border-top:1px solid #e2e8f0; margin-top:4px; }
+.sec-label:first-child { border-top:none; margin-top:0; }
+.row-btn { background:var(--card); border:1px solid #e2e8f0; border-radius:12px; padding:16px 10px; text-align:center; cursor:pointer; color:var(--text); transition:transform 0.1s, box-shadow 0.1s; box-shadow:0 1px 3px #0000000a; }
+.row-btn:active { transform:scale(0.95); box-shadow:none; }
+.row-name { font-size:1.25rem; font-weight:600; display:block; }
+.row-stat { font-size:0.7rem; color:var(--muted); margin-top:5px; display:block; }
+.row-stat.good { color:var(--correct); } .row-stat.bad { color:var(--wrong); }
+
+/* ── Table ── */
+.tbl-section { padding:0 20px 4px; }
+.tbl-section-title { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em;
+  padding:16px 0 8px; border-top:1px solid #e2e8f0; margin-top:4px; }
+.tbl-section:first-child .tbl-section-title { border-top:none; padding-top:16px; }
+.kana-table { width:100%; border-collapse:collapse; }
+.kana-table th, .kana-table td { text-align:center; padding:4px 2px; border:1px solid #e2e8f0; min-width:42px; }
+.kana-table th { color:var(--muted); font-size:0.7rem; font-weight:400; background:#f8fafc; }
+.kana-cell { display:flex; flex-direction:column; align-items:center; gap:1px; cursor:pointer; padding:5px 0; border-radius:6px; transition:background 0.15s; }
+.kana-cell:active { background:#0000000a; }
+.kana-cell.lit .k-char { color:var(--accent); }
+.kana-cell.playing .k-char { color:var(--accent-kata); }
+.k-char { font-size:1.3rem; line-height:1.2; }
+.k-rom { font-size:0.6rem; color:var(--muted); }
+.k-rom.arc { color:#b0b8c4; font-style:italic; }
+
+/* ── Practice ── */
+.practice-top { display:flex; align-items:center; gap:12px; padding:16px 20px; background:var(--card); border-bottom:1px solid #e2e8f0; }
+.prog-wrap { flex:1; height:6px; background:var(--card2); border-radius:3px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--accent); border-radius:3px; transition:width 0.35s ease; }
+.prog-fill.kata { background:var(--accent-kata); }
+.prog-label { font-size:0.82rem; color:var(--muted); white-space:nowrap; }
+.mode-tag { text-align:center; font-size:0.75rem; color:var(--muted); padding:8px 20px 4px; }
+.q-area { flex:1; display:flex; align-items:center; justify-content:center; padding:20px; cursor:pointer; flex-direction:column; gap:8px; }
+.q-char { font-size:6rem; line-height:1; text-align:center; user-select:none; color:var(--text); }
+.q-text { font-size:2.8rem; font-weight:700; text-align:center; letter-spacing:0.05em; user-select:none; color:var(--accent); }
+.q-hint { font-size:0.72rem; color:var(--muted); }
+.choices { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 20px 20px; }
+.choice-btn { padding:18px 8px; background:var(--card); border:1.5px solid #e2e8f0; border-radius:12px;
+  color:var(--text); font-size:1.25rem; cursor:pointer; transition:all 0.15s; min-height:64px; line-height:1.2;
+  box-shadow:0 1px 3px #0000000a; }
+.choice-btn:disabled { cursor:default; }
+.choice-btn.correct { background:var(--correct) !important; color:#fff; border-color:var(--correct); }
+.choice-btn.wrong   { background:var(--wrong)   !important; color:#fff; border-color:var(--wrong); }
+.choice-btn.reveal  { background:var(--correct) !important; color:#fff; border-color:var(--correct); }
+
+/* ── Result ── */
+.result-score { text-align:center; padding:40px 20px 24px; }
+.score-big { font-size:5rem; font-weight:700; line-height:1; color:var(--accent); }
+.score-denom { font-size:1.6rem; color:var(--muted); }
+.score-msg { font-size:1rem; color:var(--muted); margin-top:8px; }
+.missed-wrap { padding:0 20px 8px; }
+.missed-wrap h3 { font-size:0.85rem; color:var(--muted); margin-bottom:10px; }
+.missed-item { display:flex; align-items:center; gap:14px; background:var(--card); border:1px solid #e2e8f0; border-radius:10px; padding:12px 16px; margin-bottom:8px; cursor:pointer; box-shadow:0 1px 3px #0000000a; }
+.missed-item:active { opacity:0.7; }
+.m-kana { font-size:1.6rem; min-width:2rem; text-align:center; }
+.m-arrow { color:var(--muted); font-size:0.9rem; }
+.m-rom { font-size:1rem; }
+</style>
+</head>
+<body>
+
+<!-- Home -->
+<div id="s-home" class="screen active">
+  <div class="header"><h1>假名練習</h1></div>
+  <div class="type-toggle">
+    <button class="type-btn hira active" id="home-hira" onclick="setType('hiragana')">平假名　あ</button>
+    <button class="type-btn kata"        id="home-kata" onclick="setType('katakana')">片假名　ア</button>
+  </div>
+  <div class="row-grid" id="row-grid"></div>
+  <div class="bottom-actions">
+    <button class="btn-primary hira" id="all-btn" onclick="startPractice(null)">全部隨機練習</button>
+    <button class="btn-secondary" onclick="go('s-table')">查看假名表</button>
+  </div>
+</div>
+
+<!-- Table -->
+<div id="s-table" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="go('s-home')">←</button>
+    <h1>假名表</h1>
+  </div>
+  <div class="type-toggle">
+    <button class="type-btn hira active" id="tbl-hira" onclick="setTableType('hiragana')">平假名　あ</button>
+    <button class="type-btn kata"        id="tbl-kata" onclick="setTableType('katakana')">片假名　ア</button>
+  </div>
+  <div id="table-container"></div>
+</div>
+
+<!-- Practice -->
+<div id="s-practice" class="screen">
+  <div class="practice-top">
+    <button class="back-btn" onclick="go('s-home')">←</button>
+    <div class="prog-wrap"><div class="prog-fill" id="prog-fill"></div></div>
+    <span class="prog-label" id="prog-label">1 / 10</span>
+  </div>
+  <div class="mode-tag" id="mode-tag"></div>
+  <div class="q-area" id="q-area" onclick="replayAudio()"></div>
+  <div class="choices" id="choices"></div>
+</div>
+
+<!-- Result -->
+<div id="s-result" class="screen">
+  <div class="header"><h1>練習結果</h1></div>
+  <div class="result-score">
+    <div><span class="score-big" id="r-score">0</span><span class="score-denom" id="r-denom"> / 10</span></div>
+    <div class="score-msg" id="r-msg"></div>
+  </div>
+  <div class="missed-wrap" id="missed-wrap"></div>
+  <div class="bottom-actions">
+    <button class="btn-primary hira" id="retry-btn" onclick="retry()">再練一次</button>
+    <button class="btn-secondary" onclick="go('s-home')">回首頁</button>
+  </div>
+</div>
+
+<script>
+// ── Speech ────────────────────────────────────────────────────────────
+let lastSpoken = '';
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  lastSpoken = text;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'ja-JP';
+  utt.rate = 0.8;
+  window.speechSynthesis.speak(utt);
+}
+function replayAudio() { if (lastSpoken) speak(lastSpoken); }
+
+// ── Data ─────────────────────────────────────────────────────────────
+// p:false = table only (archaic / same-sound as another char)
+const ROWS = {
+  hiragana: [
+    // 清音
+    { row:'あ行', cat:'seion', chars:[{k:'あ',r:'a'},{k:'い',r:'i'},{k:'う',r:'u'},{k:'え',r:'e'},{k:'お',r:'o'}] },
+    { row:'か行', cat:'seion', chars:[{k:'か',r:'ka'},{k:'き',r:'ki'},{k:'く',r:'ku'},{k:'け',r:'ke'},{k:'こ',r:'ko'}] },
+    { row:'さ行', cat:'seion', chars:[{k:'さ',r:'sa'},{k:'し',r:'shi'},{k:'す',r:'su'},{k:'せ',r:'se'},{k:'そ',r:'so'}] },
+    { row:'た行', cat:'seion', chars:[{k:'た',r:'ta'},{k:'ち',r:'chi'},{k:'つ',r:'tsu'},{k:'て',r:'te'},{k:'と',r:'to'}] },
+    { row:'な行', cat:'seion', chars:[{k:'な',r:'na'},{k:'に',r:'ni'},{k:'ぬ',r:'nu'},{k:'ね',r:'ne'},{k:'の',r:'no'}] },
+    { row:'は行', cat:'seion', chars:[{k:'は',r:'ha'},{k:'ひ',r:'hi'},{k:'ふ',r:'fu'},{k:'へ',r:'he'},{k:'ほ',r:'ho'}] },
+    { row:'ま行', cat:'seion', chars:[{k:'ま',r:'ma'},{k:'み',r:'mi'},{k:'む',r:'mu'},{k:'め',r:'me'},{k:'も',r:'mo'}] },
+    { row:'や行', cat:'seion', chars:[{k:'や',r:'ya'},{k:'ゆ',r:'yu'},{k:'よ',r:'yo'}] },
+    { row:'ら行', cat:'seion', chars:[{k:'ら',r:'ra'},{k:'り',r:'ri'},{k:'る',r:'ru'},{k:'れ',r:'re'},{k:'ろ',r:'ro'}] },
+    { row:'わ行', cat:'seion', chars:[{k:'わ',r:'wa'},{k:'を',r:'wo'},{k:'ん',r:'n'}] },
+    // 濁音
+    { row:'が行', cat:'dakuten', chars:[{k:'が',r:'ga'},{k:'ぎ',r:'gi'},{k:'ぐ',r:'gu'},{k:'げ',r:'ge'},{k:'ご',r:'go'}] },
+    { row:'ざ行', cat:'dakuten', chars:[{k:'ざ',r:'za'},{k:'じ',r:'ji'},{k:'ず',r:'zu'},{k:'ぜ',r:'ze'},{k:'ぞ',r:'zo'}] },
+    { row:'だ行', cat:'dakuten', chars:[{k:'だ',r:'da'},{k:'ぢ',r:'ji',p:false},{k:'づ',r:'zu',p:false},{k:'で',r:'de'},{k:'ど',r:'do'}] },
+    { row:'ば行', cat:'dakuten', chars:[{k:'ば',r:'ba'},{k:'び',r:'bi'},{k:'ぶ',r:'bu'},{k:'べ',r:'be'},{k:'ぼ',r:'bo'}] },
+    // 半濁音
+    { row:'ぱ行', cat:'dakuten', chars:[{k:'ぱ',r:'pa'},{k:'ぴ',r:'pi'},{k:'ぷ',r:'pu'},{k:'ぺ',r:'pe'},{k:'ぽ',r:'po'}] },
+    // 拗音 清音
+    { row:'きゃ行', cat:'yoon', chars:[{k:'きゃ',r:'kya'},{k:'きゅ',r:'kyu'},{k:'きょ',r:'kyo'}] },
+    { row:'しゃ行', cat:'yoon', chars:[{k:'しゃ',r:'sha'},{k:'しゅ',r:'shu'},{k:'しょ',r:'sho'}] },
+    { row:'ちゃ行', cat:'yoon', chars:[{k:'ちゃ',r:'cha'},{k:'ちゅ',r:'chu'},{k:'ちょ',r:'cho'}] },
+    { row:'にゃ行', cat:'yoon', chars:[{k:'にゃ',r:'nya'},{k:'にゅ',r:'nyu'},{k:'にょ',r:'nyo'}] },
+    { row:'ひゃ行', cat:'yoon', chars:[{k:'ひゃ',r:'hya'},{k:'ひゅ',r:'hyu'},{k:'ひょ',r:'hyo'}] },
+    { row:'みゃ行', cat:'yoon', chars:[{k:'みゃ',r:'mya'},{k:'みゅ',r:'myu'},{k:'みょ',r:'myo'}] },
+    { row:'りゃ行', cat:'yoon', chars:[{k:'りゃ',r:'rya'},{k:'りゅ',r:'ryu'},{k:'りょ',r:'ryo'}] },
+    // 拗音 濁音
+    { row:'ぎゃ行', cat:'yoon', chars:[{k:'ぎゃ',r:'gya'},{k:'ぎゅ',r:'gyu'},{k:'ぎょ',r:'gyo'}] },
+    { row:'じゃ行', cat:'yoon', chars:[{k:'じゃ',r:'ja'},{k:'じゅ',r:'ju'},{k:'じょ',r:'jo'}] },
+    { row:'びゃ行', cat:'yoon', chars:[{k:'びゃ',r:'bya'},{k:'びゅ',r:'byu'},{k:'びょ',r:'byo'}] },
+    { row:'ぴゃ行', cat:'yoon', chars:[{k:'ぴゃ',r:'pya'},{k:'ぴゅ',r:'pyu'},{k:'ぴょ',r:'pyo'}] },
+  ],
+  katakana: [
+    // 清音
+    { row:'ア行', cat:'seion', chars:[{k:'ア',r:'a'},{k:'イ',r:'i'},{k:'ウ',r:'u'},{k:'エ',r:'e'},{k:'オ',r:'o'}] },
+    { row:'カ行', cat:'seion', chars:[{k:'カ',r:'ka'},{k:'キ',r:'ki'},{k:'ク',r:'ku'},{k:'ケ',r:'ke'},{k:'コ',r:'ko'}] },
+    { row:'サ行', cat:'seion', chars:[{k:'サ',r:'sa'},{k:'シ',r:'shi'},{k:'ス',r:'su'},{k:'セ',r:'se'},{k:'ソ',r:'so'}] },
+    { row:'タ行', cat:'seion', chars:[{k:'タ',r:'ta'},{k:'チ',r:'chi'},{k:'ツ',r:'tsu'},{k:'テ',r:'te'},{k:'ト',r:'to'}] },
+    { row:'ナ行', cat:'seion', chars:[{k:'ナ',r:'na'},{k:'ニ',r:'ni'},{k:'ヌ',r:'nu'},{k:'ネ',r:'ne'},{k:'ノ',r:'no'}] },
+    { row:'ハ行', cat:'seion', chars:[{k:'ハ',r:'ha'},{k:'ヒ',r:'hi'},{k:'フ',r:'fu'},{k:'ヘ',r:'he'},{k:'ホ',r:'ho'}] },
+    { row:'マ行', cat:'seion', chars:[{k:'マ',r:'ma'},{k:'ミ',r:'mi'},{k:'ム',r:'mu'},{k:'メ',r:'me'},{k:'モ',r:'mo'}] },
+    { row:'ヤ行', cat:'seion', chars:[{k:'ヤ',r:'ya'},{k:'ユ',r:'yu'},{k:'ヨ',r:'yo'}] },
+    { row:'ラ行', cat:'seion', chars:[{k:'ラ',r:'ra'},{k:'リ',r:'ri'},{k:'ル',r:'ru'},{k:'レ',r:'re'},{k:'ロ',r:'ro'}] },
+    { row:'ワ行', cat:'seion', chars:[{k:'ワ',r:'wa'},{k:'ヲ',r:'wo'},{k:'ン',r:'n'}] },
+    // 濁音
+    { row:'ガ行', cat:'dakuten', chars:[{k:'ガ',r:'ga'},{k:'ギ',r:'gi'},{k:'グ',r:'gu'},{k:'ゲ',r:'ge'},{k:'ゴ',r:'go'}] },
+    { row:'ザ行', cat:'dakuten', chars:[{k:'ザ',r:'za'},{k:'ジ',r:'ji'},{k:'ズ',r:'zu'},{k:'ゼ',r:'ze'},{k:'ゾ',r:'zo'}] },
+    { row:'ダ行', cat:'dakuten', chars:[{k:'ダ',r:'da'},{k:'ヂ',r:'ji',p:false},{k:'ヅ',r:'zu',p:false},{k:'デ',r:'de'},{k:'ド',r:'do'}] },
+    { row:'バ行', cat:'dakuten', chars:[{k:'バ',r:'ba'},{k:'ビ',r:'bi'},{k:'ブ',r:'bu'},{k:'ベ',r:'be'},{k:'ボ',r:'bo'}] },
+    // 半濁音
+    { row:'パ行', cat:'dakuten', chars:[{k:'パ',r:'pa'},{k:'ピ',r:'pi'},{k:'プ',r:'pu'},{k:'ペ',r:'pe'},{k:'ポ',r:'po'}] },
+    // 拗音 清音
+    { row:'キャ行', cat:'yoon', chars:[{k:'キャ',r:'kya'},{k:'キュ',r:'kyu'},{k:'キョ',r:'kyo'}] },
+    { row:'シャ行', cat:'yoon', chars:[{k:'シャ',r:'sha'},{k:'シュ',r:'shu'},{k:'ショ',r:'sho'}] },
+    { row:'チャ行', cat:'yoon', chars:[{k:'チャ',r:'cha'},{k:'チュ',r:'chu'},{k:'チョ',r:'cho'}] },
+    { row:'ニャ行', cat:'yoon', chars:[{k:'ニャ',r:'nya'},{k:'ニュ',r:'nyu'},{k:'ニョ',r:'nyo'}] },
+    { row:'ヒャ行', cat:'yoon', chars:[{k:'ヒャ',r:'hya'},{k:'ヒュ',r:'hyu'},{k:'ヒョ',r:'hyo'}] },
+    { row:'ミャ行', cat:'yoon', chars:[{k:'ミャ',r:'mya'},{k:'ミュ',r:'myu'},{k:'ミョ',r:'myo'}] },
+    { row:'リャ行', cat:'yoon', chars:[{k:'リャ',r:'rya'},{k:'リュ',r:'ryu'},{k:'リョ',r:'ryo'}] },
+    // 拗音 濁音
+    { row:'ギャ行', cat:'yoon', chars:[{k:'ギャ',r:'gya'},{k:'ギュ',r:'gyu'},{k:'ギョ',r:'gyo'}] },
+    { row:'ジャ行', cat:'yoon', chars:[{k:'ジャ',r:'ja'},{k:'ジュ',r:'ju'},{k:'ジョ',r:'jo'}] },
+    { row:'ビャ行', cat:'yoon', chars:[{k:'ビャ',r:'bya'},{k:'ビュ',r:'byu'},{k:'ビョ',r:'byo'}] },
+    { row:'ピャ行', cat:'yoon', chars:[{k:'ピャ',r:'pya'},{k:'ピュ',r:'pyu'},{k:'ピョ',r:'pyo'}] },
+  ]
+};
+
+// Table layout data (hardcoded with explicit kana to avoid romaji key collisions)
+const TBL_SEION = {
+  hiragana: [
+    { label:'あ', cells:[{k:'あ',r:'a'},{k:'い',r:'i'},{k:'う',r:'u'},{k:'え',r:'e'},{k:'お',r:'o'}] },
+    { label:'か', cells:[{k:'か',r:'ka'},{k:'き',r:'ki'},{k:'く',r:'ku'},{k:'け',r:'ke'},{k:'こ',r:'ko'}] },
+    { label:'さ', cells:[{k:'さ',r:'sa'},{k:'し',r:'shi'},{k:'す',r:'su'},{k:'せ',r:'se'},{k:'そ',r:'so'}] },
+    { label:'た', cells:[{k:'た',r:'ta'},{k:'ち',r:'chi'},{k:'つ',r:'tsu'},{k:'て',r:'te'},{k:'と',r:'to'}] },
+    { label:'な', cells:[{k:'な',r:'na'},{k:'に',r:'ni'},{k:'ぬ',r:'nu'},{k:'ね',r:'ne'},{k:'の',r:'no'}] },
+    { label:'は', cells:[{k:'は',r:'ha'},{k:'ひ',r:'hi'},{k:'ふ',r:'fu'},{k:'へ',r:'he'},{k:'ほ',r:'ho'}] },
+    { label:'ま', cells:[{k:'ま',r:'ma'},{k:'み',r:'mi'},{k:'む',r:'mu'},{k:'め',r:'me'},{k:'も',r:'mo'}] },
+    { label:'や', cells:[{k:'や',r:'ya'},null,{k:'ゆ',r:'yu'},null,{k:'よ',r:'yo'}] },
+    { label:'ら', cells:[{k:'ら',r:'ra'},{k:'り',r:'ri'},{k:'る',r:'ru'},{k:'れ',r:'re'},{k:'ろ',r:'ro'}] },
+    { label:'わ', cells:[{k:'わ',r:'wa'},null,null,null,{k:'を',r:'wo'}] },
+    { label:'ん', cells:[{k:'ん',r:'n'},null,null,null,null] },
+  ],
+  katakana: [
+    { label:'ア', cells:[{k:'ア',r:'a'},{k:'イ',r:'i'},{k:'ウ',r:'u'},{k:'エ',r:'e'},{k:'オ',r:'o'}] },
+    { label:'カ', cells:[{k:'カ',r:'ka'},{k:'キ',r:'ki'},{k:'ク',r:'ku'},{k:'ケ',r:'ke'},{k:'コ',r:'ko'}] },
+    { label:'サ', cells:[{k:'サ',r:'sa'},{k:'シ',r:'shi'},{k:'ス',r:'su'},{k:'セ',r:'se'},{k:'ソ',r:'so'}] },
+    { label:'タ', cells:[{k:'タ',r:'ta'},{k:'チ',r:'chi'},{k:'ツ',r:'tsu'},{k:'テ',r:'te'},{k:'ト',r:'to'}] },
+    { label:'ナ', cells:[{k:'ナ',r:'na'},{k:'ニ',r:'ni'},{k:'ヌ',r:'nu'},{k:'ネ',r:'ne'},{k:'ノ',r:'no'}] },
+    { label:'ハ', cells:[{k:'ハ',r:'ha'},{k:'ヒ',r:'hi'},{k:'フ',r:'fu'},{k:'ヘ',r:'he'},{k:'ホ',r:'ho'}] },
+    { label:'マ', cells:[{k:'マ',r:'ma'},{k:'ミ',r:'mi'},{k:'ム',r:'mu'},{k:'メ',r:'me'},{k:'モ',r:'mo'}] },
+    { label:'ヤ', cells:[{k:'ヤ',r:'ya'},null,{k:'ユ',r:'yu'},null,{k:'ヨ',r:'yo'}] },
+    { label:'ラ', cells:[{k:'ラ',r:'ra'},{k:'リ',r:'ri'},{k:'ル',r:'ru'},{k:'レ',r:'re'},{k:'ロ',r:'ro'}] },
+    { label:'ワ', cells:[{k:'ワ',r:'wa'},null,null,null,{k:'ヲ',r:'wo'}] },
+    { label:'ン', cells:[{k:'ン',r:'n'},null,null,null,null] },
+  ]
+};
+
+const TBL_DAKUTEN = {
+  hiragana: [
+    { label:'が', cells:[{k:'が',r:'ga'},{k:'ぎ',r:'gi'},{k:'ぐ',r:'gu'},{k:'げ',r:'ge'},{k:'ご',r:'go'}] },
+    { label:'ざ', cells:[{k:'ざ',r:'za'},{k:'じ',r:'ji'},{k:'ず',r:'zu'},{k:'ぜ',r:'ze'},{k:'ぞ',r:'zo'}] },
+    { label:'だ', cells:[{k:'だ',r:'da'},{k:'ぢ',r:'ji',arc:true},{k:'づ',r:'zu',arc:true},{k:'で',r:'de'},{k:'ど',r:'do'}] },
+    { label:'ば', cells:[{k:'ば',r:'ba'},{k:'び',r:'bi'},{k:'ぶ',r:'bu'},{k:'べ',r:'be'},{k:'ぼ',r:'bo'}] },
+    { label:'ぱ', cells:[{k:'ぱ',r:'pa'},{k:'ぴ',r:'pi'},{k:'ぷ',r:'pu'},{k:'ぺ',r:'pe'},{k:'ぽ',r:'po'}] },
+  ],
+  katakana: [
+    { label:'ガ', cells:[{k:'ガ',r:'ga'},{k:'ギ',r:'gi'},{k:'グ',r:'gu'},{k:'ゲ',r:'ge'},{k:'ゴ',r:'go'}] },
+    { label:'ザ', cells:[{k:'ザ',r:'za'},{k:'ジ',r:'ji'},{k:'ズ',r:'zu'},{k:'ゼ',r:'ze'},{k:'ゾ',r:'zo'}] },
+    { label:'ダ', cells:[{k:'ダ',r:'da'},{k:'ヂ',r:'ji',arc:true},{k:'ヅ',r:'zu',arc:true},{k:'デ',r:'de'},{k:'ド',r:'do'}] },
+    { label:'バ', cells:[{k:'バ',r:'ba'},{k:'ビ',r:'bi'},{k:'ブ',r:'bu'},{k:'ベ',r:'be'},{k:'ボ',r:'bo'}] },
+    { label:'パ', cells:[{k:'パ',r:'pa'},{k:'ピ',r:'pi'},{k:'プ',r:'pu'},{k:'ペ',r:'pe'},{k:'ポ',r:'po'}] },
+  ]
+};
+
+const TBL_YOON = {
+  hiragana: [
+    { label:'き', cells:[{k:'きゃ',r:'kya'},{k:'きゅ',r:'kyu'},{k:'きょ',r:'kyo'}] },
+    { label:'し', cells:[{k:'しゃ',r:'sha'},{k:'しゅ',r:'shu'},{k:'しょ',r:'sho'}] },
+    { label:'ち', cells:[{k:'ちゃ',r:'cha'},{k:'ちゅ',r:'chu'},{k:'ちょ',r:'cho'}] },
+    { label:'に', cells:[{k:'にゃ',r:'nya'},{k:'にゅ',r:'nyu'},{k:'にょ',r:'nyo'}] },
+    { label:'ひ', cells:[{k:'ひゃ',r:'hya'},{k:'ひゅ',r:'hyu'},{k:'ひょ',r:'hyo'}] },
+    { label:'み', cells:[{k:'みゃ',r:'mya'},{k:'みゅ',r:'myu'},{k:'みょ',r:'myo'}] },
+    { label:'り', cells:[{k:'りゃ',r:'rya'},{k:'りゅ',r:'ryu'},{k:'りょ',r:'ryo'}] },
+    { label:'ぎ', cells:[{k:'ぎゃ',r:'gya'},{k:'ぎゅ',r:'gyu'},{k:'ぎょ',r:'gyo'}] },
+    { label:'じ', cells:[{k:'じゃ',r:'ja'},{k:'じゅ',r:'ju'},{k:'じょ',r:'jo'}] },
+    { label:'び', cells:[{k:'びゃ',r:'bya'},{k:'びゅ',r:'byu'},{k:'びょ',r:'byo'}] },
+    { label:'ぴ', cells:[{k:'ぴゃ',r:'pya'},{k:'ぴゅ',r:'pyu'},{k:'ぴょ',r:'pyo'}] },
+  ],
+  katakana: [
+    { label:'キ', cells:[{k:'キャ',r:'kya'},{k:'キュ',r:'kyu'},{k:'キョ',r:'kyo'}] },
+    { label:'シ', cells:[{k:'シャ',r:'sha'},{k:'シュ',r:'shu'},{k:'ショ',r:'sho'}] },
+    { label:'チ', cells:[{k:'チャ',r:'cha'},{k:'チュ',r:'chu'},{k:'チョ',r:'cho'}] },
+    { label:'ニ', cells:[{k:'ニャ',r:'nya'},{k:'ニュ',r:'nyu'},{k:'ニョ',r:'nyo'}] },
+    { label:'ヒ', cells:[{k:'ヒャ',r:'hya'},{k:'ヒュ',r:'hyu'},{k:'ヒョ',r:'hyo'}] },
+    { label:'ミ', cells:[{k:'ミャ',r:'mya'},{k:'ミュ',r:'myu'},{k:'ミョ',r:'myo'}] },
+    { label:'リ', cells:[{k:'リャ',r:'rya'},{k:'リュ',r:'ryu'},{k:'リョ',r:'ryo'}] },
+    { label:'ギ', cells:[{k:'ギャ',r:'gya'},{k:'ギュ',r:'gyu'},{k:'ギョ',r:'gyo'}] },
+    { label:'ジ', cells:[{k:'ジャ',r:'ja'},{k:'ジュ',r:'ju'},{k:'ジョ',r:'jo'}] },
+    { label:'ビ', cells:[{k:'ビャ',r:'bya'},{k:'ビュ',r:'byu'},{k:'ビョ',r:'byo'}] },
+    { label:'ピ', cells:[{k:'ピャ',r:'pya'},{k:'ピュ',r:'pyu'},{k:'ピョ',r:'pyo'}] },
+  ]
+};
+
+// ── State ─────────────────────────────────────────────────────────────
+let currentType = 'hiragana';
+let tableType   = 'hiragana';
+let session     = {};
+
+// ── Progress ──────────────────────────────────────────────────────────
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem('kana_v2') || '{}'); } catch { return {}; }
+}
+function recordProgress(type, rowName, correct, total) {
+  const p = loadProgress();
+  if (!p[type]) p[type] = {};
+  if (!p[type][rowName]) p[type][rowName] = { practiced:0, correct:0, total:0 };
+  p[type][rowName].practiced++;
+  p[type][rowName].correct += correct;
+  p[type][rowName].total   += total;
+  localStorage.setItem('kana_v2', JSON.stringify(p));
+}
+
+// ── Nav ───────────────────────────────────────────────────────────────
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 's-home')  renderHome();
+  if (id === 's-table') renderTable();
+}
+
+// ── Home ──────────────────────────────────────────────────────────────
+function setType(type) {
+  currentType = type;
+  const isHira = type === 'hiragana';
+  document.getElementById('home-hira').classList.toggle('active', isHira);
+  document.getElementById('home-kata').classList.toggle('active', !isHira);
+  document.getElementById('all-btn').className = `btn-primary ${isHira ? 'hira' : 'kata'}`;
+  renderHome();
+}
+
+const CAT_LABELS = { seion:'清音', dakuten:'濁音・半濁音', yoon:'拗音' };
+
+function renderHome() {
+  const prog = loadProgress();
+  const grid = document.getElementById('row-grid');
+  grid.innerHTML = '';
+  let lastCat = null;
+
+  ROWS[currentType].forEach(({ row, cat, chars }) => {
+    if (cat !== lastCat) {
+      const lbl = document.createElement('div');
+      lbl.className = 'sec-label';
+      lbl.textContent = CAT_LABELS[cat];
+      grid.appendChild(lbl);
+      lastCat = cat;
+    }
+    const stat = prog[currentType]?.[row];
+    let statText = '尚未練習', statClass = '';
+    if (stat?.total > 0) {
+      const pct = Math.round(stat.correct / stat.total * 100);
+      statText = `${pct}% 正確・${stat.practiced} 次`;
+      statClass = pct >= 80 ? 'good' : pct < 60 ? 'bad' : '';
+    }
+    const btn = document.createElement('button');
+    btn.className = 'row-btn';
+    btn.innerHTML = `<span class="row-name">${row}</span><span class="row-stat ${statClass}">${statText}</span>`;
+    btn.onclick = () => startPractice(row);
+    grid.appendChild(btn);
+  });
+}
+
+// ── Table ─────────────────────────────────────────────────────────────
+function setTableType(type) {
+  tableType = type;
+  document.getElementById('tbl-hira').classList.toggle('active', type === 'hiragana');
+  document.getElementById('tbl-kata').classList.toggle('active', type === 'katakana');
+  renderTable();
+}
+
+function makeTblCell(c) {
+  if (!c) return '<td></td>';
+  const romClass = c.arc ? ' arc' : '';
+  const romLabel = c.arc ? `${c.r}*` : c.r;
+  return `<td><div class="kana-cell" onclick="tblClick(this,'${c.k}')">
+    <span class="k-char">${c.k}</span>
+    <span class="k-rom${romClass}">${romLabel}</span>
+  </div></td>`;
+}
+
+function makeTable(layout, cols) {
+  const colHeaders = cols === 5
+    ? '<th></th><th>a</th><th>i</th><th>u</th><th>e</th><th>o</th>'
+    : '<th></th><th>ya</th><th>yu</th><th>yo</th>';
+  let html = `<table class="kana-table"><thead><tr>${colHeaders}</tr></thead><tbody>`;
+  layout.forEach(({ label, cells }) => {
+    html += `<tr><th>${label}</th>`;
+    cells.forEach(c => { html += makeTblCell(c); });
+    html += '</tr>';
+  });
+  return html + '</tbody></table>';
+}
+
+function renderTable() {
+  const t = tableType;
+  document.getElementById('table-container').innerHTML =
+    `<div class="tbl-section">
+       <div class="tbl-section-title">清音</div>
+       ${makeTable(TBL_SEION[t], 5)}
+     </div>
+     <div class="tbl-section">
+       <div class="tbl-section-title">濁音・半濁音　<small style="font-size:0.65rem;letter-spacing:0">（*ぢ・づ 與 じ・ず 同音）</small></div>
+       ${makeTable(TBL_DAKUTEN[t], 5)}
+     </div>
+     <div class="tbl-section">
+       <div class="tbl-section-title">拗音</div>
+       ${makeTable(TBL_YOON[t], 3)}
+     </div>`;
+}
+
+function tblClick(el, kana) {
+  document.querySelectorAll('.kana-cell.lit').forEach(e => e.classList.remove('lit'));
+  el.classList.add('lit');
+  speak(kana);
+  el.classList.add('playing');
+  setTimeout(() => el.classList.remove('playing'), 800);
+}
+
+// ── Practice ──────────────────────────────────────────────────────────
+function allChars(type) {
+  return ROWS[type || currentType].flatMap(r =>
+    r.chars.filter(c => c.p !== false).map(c => ({ ...c, row: r.row, cat: r.cat }))
+  );
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildQuestions(pool) {
+  const count = pool.length <= 3 ? pool.length * 2 : 10;
+  const base = shuffle([...pool]);
+  const qs = Array.from({ length: count }, (_, i) => ({
+    char: base[i % base.length],
+    mode: Math.random() < 0.5 ? 'reading' : 'writing'
+  }));
+  return shuffle(qs);
+}
+
+function getDistractors(q, all) {
+  const sameCat = all.filter(c => c.cat === q.char.cat && c.r !== q.char.r);
+  const pool = sameCat.length >= 3 ? sameCat : all.filter(c => c.r !== q.char.r);
+  return shuffle(pool).slice(0, 3);
+}
+
+function startPractice(rowName) {
+  const rowDef = rowName ? ROWS[currentType].find(r => r.row === rowName) : null;
+  const pool = rowName
+    ? (rowDef?.chars.filter(c => c.p !== false).map(c => ({ ...c, row: rowName, cat: rowDef.cat })) || [])
+    : allChars();
+  if (!pool.length) return;
+
+  session = { type: currentType, rowName, questions: buildQuestions(pool), index: 0, score: 0, missed: [] };
+
+  const isHira = currentType === 'hiragana';
+  document.getElementById('prog-fill').className = `prog-fill ${isHira ? '' : 'kata'}`;
+  document.getElementById('retry-btn').className  = `btn-primary ${isHira ? 'hira' : 'kata'}`;
+
+  go('s-practice');
+  renderQuestion();
+}
+
+let speakTimer = null;
+function renderQuestion() {
+  const { questions, index } = session;
+  const total = questions.length;
+  const q = questions[index];
+
+  document.getElementById('prog-fill').style.width = `${(index / total) * 100}%`;
+  document.getElementById('prog-label').textContent = `${index + 1} / ${total}`;
+  document.getElementById('mode-tag').textContent =
+    q.mode === 'reading' ? '認字模式 — 看假名，選出讀音' : '識字模式 — 看讀音，選出假名';
+
+  document.getElementById('q-area').innerHTML = q.mode === 'reading'
+    ? `<div class="q-char">${q.char.k}</div><div class="q-hint">點此重播發音</div>`
+    : `<div class="q-text">${q.char.r}</div><div class="q-hint">點此重播發音</div>`;
+
+  const all = allChars();
+  const choices = shuffle([q.char, ...getDistractors(q, all)]);
+
+  const el = document.getElementById('choices');
+  el.innerHTML = '';
+  choices.forEach(ch => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = q.mode === 'reading' ? ch.r : ch.k;
+    btn.onclick = () => answer(btn, ch, q, el);
+    el.appendChild(btn);
+  });
+
+  clearTimeout(speakTimer);
+  speakTimer = setTimeout(() => speak(q.char.k), 400);
+}
+
+function answer(btn, chosen, q, choicesEl) {
+  choicesEl.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+  const isCorrect = q.mode === 'reading' ? chosen.r === q.char.r : chosen.k === q.char.k;
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    session.score++;
+  } else {
+    btn.classList.add('wrong');
+    const correctVal = q.mode === 'reading' ? q.char.r : q.char.k;
+    choicesEl.querySelectorAll('.choice-btn').forEach(b => {
+      if (b.textContent === correctVal) b.classList.add('reveal');
+    });
+    session.missed.push(q.char);
+  }
+
+  speak(q.char.k);
+
+  setTimeout(() => {
+    session.index++;
+    session.index >= session.questions.length ? finishPractice() : renderQuestion();
+  }, 1000);
+}
+
+function finishPractice() {
+  if (session.rowName) recordProgress(session.type, session.rowName, session.score, session.questions.length);
+
+  const total = session.questions.length;
+  const pct = Math.round(session.score / total * 100);
+  document.getElementById('r-score').textContent = session.score;
+  document.getElementById('r-denom').textContent = ` / ${total}`;
+  document.getElementById('r-msg').textContent =
+    pct === 100 ? '完美，全對！' : pct >= 80 ? '很不錯！繼續保持' : pct >= 60 ? '不錯，再練幾次更紮實' : '多練幾次，你可以的！';
+
+  const missedEl = document.getElementById('missed-wrap');
+  if (!session.missed.length) {
+    missedEl.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px 0">全部答對！</p>';
+  } else {
+    const unique = [...new Map(session.missed.map(m => [m.k, m])).values()];
+    missedEl.innerHTML = '<h3>答錯的字</h3>' + unique.map(m =>
+      `<div class="missed-item" onclick="speak('${m.k}')">
+        <span class="m-kana">${m.k}</span>
+        <span class="m-arrow">↔</span>
+        <span class="m-rom">${m.r}</span>
+      </div>`
+    ).join('');
+  }
+
+  go('s-result');
+}
+
+function retry() {
+  currentType = session.type;
+  startPractice(session.rowName);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+renderHome();
+</script>
+</body>
+</html>
