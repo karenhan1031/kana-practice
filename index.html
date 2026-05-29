@@ -22,7 +22,8 @@ html,body { height:100%; background:var(--bg); color:var(--text);
 
 /* Shared */
 .header { display:flex; align-items:center; gap:12px; padding:16px 20px;
-  border-bottom:1px solid #e2e8f0; background:var(--card); }
+  border-bottom:1px solid #e2e8f0; background:var(--card);
+  position:sticky; top:0; z-index:100; }
 .header h1 { font-size:1.1rem; font-weight:600; flex:1; }
 .back-btn { background:none; border:none; color:var(--text); font-size:1.5rem; cursor:pointer; padding:4px 8px; line-height:1; }
 .type-toggle { display:flex; margin:16px 20px 0; background:var(--card2); border-radius:12px; padding:4px; }
@@ -87,7 +88,8 @@ html,body { height:100%; background:var(--bg); color:var(--text);
 
 /* Practice */
 .practice-top { display:flex; align-items:center; gap:12px; padding:16px 20px;
-  background:var(--card); border-bottom:1px solid #e2e8f0; }
+  background:var(--card); border-bottom:1px solid #e2e8f0;
+  position:sticky; top:0; z-index:100; }
 .prog-wrap { flex:1; height:6px; background:var(--card2); border-radius:3px; overflow:hidden; }
 .prog-fill { height:100%; background:var(--accent); border-radius:3px; transition:width 0.35s ease; }
 .prog-fill.kata  { background:var(--accent-kata); }
@@ -150,6 +152,57 @@ html,body { height:100%; background:var(--bg); color:var(--text);
   color:var(--muted); font-size:0.78rem; font-weight:600; padding:5px 11px;
   cursor:pointer; white-space:nowrap; flex-shrink:0; }
 .speed-btn:active { opacity:0.7; }
+
+/* Mute button */
+.mute-btn { background:none; border:1px solid #e2e8f0; border-radius:20px;
+  padding:4px 9px; font-size:0.95rem; cursor:pointer; color:var(--muted); flex-shrink:0; line-height:1.4; }
+.mute-btn.muted { color:var(--wrong); border-color:var(--wrong); }
+
+/* Vocab list lesson nav */
+.vl-nav { background:var(--card); border-bottom:1px solid #e2e8f0;
+  padding:8px 20px; overflow-x:auto; display:flex; gap:8px; white-space:nowrap;
+  position:sticky; top:57px; z-index:99; }
+.vl-nav::-webkit-scrollbar { display:none; }
+.vl-nav-btn { background:var(--card2); border:none; border-radius:20px; padding:5px 12px;
+  font-size:0.75rem; color:var(--muted); cursor:pointer; flex-shrink:0; transition:all 0.15s; }
+.vl-nav-btn:active { background:var(--accent-vocab); color:#fff; }
+.vl-wcount { font-size:0.68rem; color:var(--accent-vocab); font-weight:600; }
+.vl-lesson { scroll-margin-top:105px; }
+
+/* Kana companion bar */
+.kana-companion { position:fixed; bottom:0; left:0; right:0; background:var(--card);
+  border-top:2px solid var(--accent-kata); padding:14px 20px;
+  display:flex; align-items:center; justify-content:center; gap:16px;
+  z-index:200; transform:translateY(100%); transition:transform 0.25s ease;
+  box-shadow:0 -2px 16px #0000001a; }
+.kana-companion.show { transform:translateY(0); }
+.kana-comp-char { font-size:2.2rem; line-height:1; }
+.kana-comp-alt { font-size:2.2rem; line-height:1; color:var(--accent-kata); }
+.kana-comp-sep { color:var(--muted); font-size:1.2rem; }
+.kana-comp-rom { font-size:0.85rem; color:var(--muted); min-width:3rem; text-align:center; }
+.kana-comp-close { background:none; border:none; color:var(--muted); font-size:1rem;
+  cursor:pointer; margin-left:8px; padding:4px; }
+
+/* Practice records */
+.worst-section { padding:16px 20px 8px; }
+.worst-section h3 { font-size:0.78rem; color:var(--muted); text-transform:uppercase;
+  letter-spacing:0.06em; margin-bottom:10px; }
+.worst-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.worst-chip { background:var(--card); border:1px solid #fecaca; border-radius:10px;
+  padding:8px 12px; display:flex; flex-direction:column; align-items:center;
+  cursor:pointer; min-width:3rem; }
+.wc-char { font-size:1.3rem; line-height:1.2; }
+.wc-n { font-size:0.65rem; color:var(--wrong); margin-top:2px; }
+.rec-session { background:var(--card); border:1px solid #e2e8f0; border-radius:12px;
+  padding:12px 16px; margin-bottom:8px; }
+.rec-meta { font-size:0.7rem; color:var(--muted); margin-bottom:4px; }
+.rec-row { display:flex; align-items:center; justify-content:space-between; }
+.rec-label-text { font-size:0.95rem; font-weight:600; }
+.rec-pct { font-size:1rem; font-weight:700; }
+.rec-pct.good { color:var(--correct); }
+.rec-pct.bad { color:var(--wrong); }
+.rec-missed { display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
+.rec-ch { background:var(--card2); border-radius:5px; padding:2px 7px; font-size:0.85rem; }
 </style>
 </head>
 <body>
@@ -158,7 +211,7 @@ html,body { height:100%; background:var(--bg); color:var(--text);
 <div id="s-home" class="screen active">
   <div class="header"><h1>日文練習</h1></div>
   <div class="home-mode-toggle">
-    <button class="hm-btn active-kana" id="hm-kana" onclick="setHomeMode('kana')">假名練習</button>
+    <button class="hm-btn active-kana" id="hm-kana" onclick="setHomeMode('kana')">五十音練習</button>
     <button class="hm-btn" id="hm-vocab" onclick="setHomeMode('vocab')">單字練習</button>
   </div>
 
@@ -172,6 +225,7 @@ html,body { height:100%; background:var(--bg); color:var(--text);
     <div class="bottom-actions">
       <button class="btn-primary hira" id="all-btn" onclick="startKanaPractice(null)">全部隨機練習</button>
       <button class="btn-secondary" onclick="go('s-table')">查看五十音表</button>
+      <button class="btn-secondary" onclick="go('s-records')">練習紀錄</button>
     </div>
   </div>
 
@@ -181,6 +235,7 @@ html,body { height:100%; background:var(--bg); color:var(--text);
     <div class="bottom-actions">
       <button class="btn-primary vocab" onclick="startVocabPractice(null)">全課隨機練習</button>
       <button class="btn-secondary" onclick="go('s-vocab-list')">查看全部單字</button>
+      <button class="btn-secondary" onclick="go('s-records')">練習紀錄</button>
     </div>
   </div>
 </div>
@@ -190,8 +245,10 @@ html,body { height:100%; background:var(--bg); color:var(--text);
   <div class="header">
     <button class="back-btn" onclick="go('s-home')">←</button>
     <h1>單字表</h1>
+    <button class="mute-btn" id="mute-btn-vl" onclick="toggleMute()">🔊</button>
     <button class="speed-btn" onclick="cycleRate()">0.6x</button>
   </div>
+  <div class="vl-nav" id="vl-nav"></div>
   <div id="vocab-list-container"></div>
 </div>
 
@@ -200,6 +257,7 @@ html,body { height:100%; background:var(--bg); color:var(--text);
   <div class="header">
     <button class="back-btn" onclick="go('s-home')">←</button>
     <h1>五十音表</h1>
+    <button class="mute-btn" id="mute-btn-tbl" onclick="toggleMute()">🔊</button>
     <button class="speed-btn" onclick="cycleRate()">0.6x</button>
   </div>
   <div class="type-toggle">
@@ -207,6 +265,13 @@ html,body { height:100%; background:var(--bg); color:var(--text);
     <button class="type-btn kata"        id="tbl-kata" onclick="setTableType('katakana')">片假名　ア</button>
   </div>
   <div id="table-container"></div>
+  <div id="kana-companion" class="kana-companion">
+    <span id="comp-main" class="kana-comp-char"></span>
+    <span class="kana-comp-sep">↔</span>
+    <span id="comp-alt" class="kana-comp-alt"></span>
+    <span id="comp-rom" class="kana-comp-rom"></span>
+    <button class="kana-comp-close" onclick="document.getElementById('kana-companion').classList.remove('show')">✕</button>
+  </div>
 </div>
 
 <!-- Practice -->
@@ -215,6 +280,7 @@ html,body { height:100%; background:var(--bg); color:var(--text);
     <button class="back-btn" onclick="go('s-home')">←</button>
     <div class="prog-wrap"><div class="prog-fill" id="prog-fill"></div></div>
     <span class="prog-label" id="prog-label">1 / 10</span>
+    <button class="mute-btn" id="mute-btn-pr" onclick="toggleMute()">🔊</button>
     <button class="speed-btn" onclick="cycleRate()">0.6x</button>
   </div>
   <div class="mode-tag" id="mode-tag"></div>
@@ -236,18 +302,48 @@ html,body { height:100%; background:var(--bg); color:var(--text);
   </div>
 </div>
 
+<!-- Records -->
+<div id="s-records" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="go('s-home')">←</button>
+    <h1>練習紀錄</h1>
+    <button class="speed-btn" style="color:var(--wrong)" onclick="clearRecords()">清除</button>
+  </div>
+  <div id="records-container"></div>
+</div>
+
 <script>
 // ── Speech ─────────────────────────────────────────────────────────────
 const RATES = [0.4, 0.6, 0.8, 1.0];
 const RATE_LABELS = ['0.4x', '0.6x', '0.8x', '1.0x'];
 let speechRateIdx = parseInt(localStorage.getItem('kana_rate_idx') || '1');
 let lastSpoken = '';
+let muteMode = localStorage.getItem('kana_mute') === '1';
+let _jaVoice = null;
+function getBestJaVoice() {
+  if (_jaVoice) return _jaVoice;
+  const voices = window.speechSynthesis.getVoices();
+  const ja = voices.filter(v => v.lang.startsWith('ja'));
+  const prefs = ['Wavenet','Neural','Premium','Enhanced','Kyoko','Otoya','Google'];
+  for (const p of prefs) {
+    const v = ja.find(v => v.name.includes(p));
+    if (v) { _jaVoice = v; return v; }
+  }
+  _jaVoice = ja[0] || null;
+  return _jaVoice;
+}
+if (window.speechSynthesis) {
+  speechSynthesis.onvoiceschanged = () => { _jaVoice = null; getBestJaVoice(); };
+}
 function speak(text) {
-  if (!window.speechSynthesis) return;
   lastSpoken = text;
+  if (muteMode || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'ja-JP'; utt.rate = RATES[speechRateIdx];
+  utt.lang = 'ja-JP';
+  utt.rate = RATES[speechRateIdx];
+  const v = getBestJaVoice();
+  if (v) utt.voice = v;
   window.speechSynthesis.speak(utt);
 }
 function replayAudio() { if (lastSpoken) speak(lastSpoken); }
@@ -256,6 +352,18 @@ function cycleRate() {
   localStorage.setItem('kana_rate_idx', speechRateIdx);
   document.querySelectorAll('.speed-btn').forEach(b => b.textContent = RATE_LABELS[speechRateIdx]);
   if (lastSpoken) speak(lastSpoken);
+}
+function toggleMute() {
+  muteMode = !muteMode;
+  localStorage.setItem('kana_mute', muteMode ? '1' : '0');
+  updateMuteBtns();
+  if (muteMode) window.speechSynthesis?.cancel();
+}
+function updateMuteBtns() {
+  document.querySelectorAll('.mute-btn').forEach(b => {
+    b.textContent = muteMode ? '🔇' : '🔊';
+    b.classList.toggle('muted', muteMode);
+  });
 }
 
 // ── Kana Data ──────────────────────────────────────────────────────────
@@ -317,6 +425,17 @@ const ROWS = {
     { row:'ピャ行', cat:'yoon',  chars:[{k:'ピャ',r:'pya'},{k:'ピュ',r:'pyu'},{k:'ピョ',r:'pyo'}] },
   ]
 };
+
+// Hiragana ↔ Katakana lookup
+const HIRA_KATA_MAP = {}, KATA_HIRA_MAP = {};
+ROWS.hiragana.forEach((hr, ri) => {
+  const kr = ROWS.katakana[ri];
+  if (!kr) return;
+  hr.chars.forEach((hc, ci) => {
+    const kc = kr.chars[ci];
+    if (hc && kc) { HIRA_KATA_MAP[hc.k] = kc.k; KATA_HIRA_MAP[kc.k] = hc.k; }
+  });
+});
 
 // ── Vocabulary Data (大家說日文初級 Lesson 1–12) ───────────────────────
 const LESSONS = [
@@ -538,6 +657,7 @@ function go(id) {
   if (id === 's-home')       { homeMode==='kana' ? renderKanaHome() : renderVocabHome(); }
   if (id === 's-table')      renderTable();
   if (id === 's-vocab-list') renderVocabList();
+  if (id === 's-records')    renderRecords();
 }
 
 // ── Home ───────────────────────────────────────────────────────────────
@@ -634,6 +754,14 @@ function tblClick(el,kana) {
   document.querySelectorAll('.kana-cell.lit').forEach(e=>e.classList.remove('lit'));
   el.classList.add('lit'); speak(kana);
   el.classList.add('playing'); setTimeout(()=>el.classList.remove('playing'),800);
+  const alt = tableType==='hiragana' ? HIRA_KATA_MAP[kana] : KATA_HIRA_MAP[kana];
+  if (alt) {
+    const rom = el.querySelector('.k-rom')?.textContent.replace('*','') || '';
+    document.getElementById('comp-main').textContent = kana;
+    document.getElementById('comp-alt').textContent = alt;
+    document.getElementById('comp-rom').textContent = rom;
+    document.getElementById('kana-companion').classList.add('show');
+  }
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────
@@ -785,6 +913,7 @@ function answer(btn, chosen, q, choicesEl, isVocab) {
 
 // ── Finish ─────────────────────────────────────────────────────────────
 function finishPractice() {
+  saveRecord(session);
   if (session.isVocab && session.lessonNum)
     saveProg('vocab_'+session.lessonNum, 'vocab_'+session.lessonNum, session.score, session.questions.length);
   else if (!session.isVocab && session.rowName)
@@ -823,6 +952,10 @@ function retry() {
 const collapsedLessons = new Set();
 
 function renderVocabList() {
+  const nav = document.getElementById('vl-nav');
+  nav.innerHTML = LESSONS.map(({l}) =>
+    `<button class="vl-nav-btn" onclick="scrollToLesson(${l})">L${l}</button>`
+  ).join('');
   const container = document.getElementById('vocab-list-container');
   container.innerHTML = LESSONS.map(({l, title, words}) => {
     const isOpen = !collapsedLessons.has(l);
@@ -837,11 +970,12 @@ function renderVocabList() {
         <span class="vl-sound">♪</span>
       </div>`
     ).join('');
-    return `<div class="vl-lesson">
+    return `<div class="vl-lesson" id="vl-lesson-${l}">
       <div class="vl-lesson-hd" onclick="toggleLesson(${l})">
         <div class="vl-lesson-hd-left">
           <span class="vl-lnum">第${l}課</span>
           <span class="vl-ltitle">${title}</span>
+          <span class="vl-wcount">${words.length}語</span>
         </div>
         <span class="vl-toggle" id="vl-toggle-${l}">${isOpen ? '▲' : '▼'}</span>
       </div>
@@ -859,10 +993,74 @@ function toggleLesson(l) {
   el.style.display = isOpen ? 'block' : 'none';
   arrow.textContent = isOpen ? '▲' : '▼';
 }
+function scrollToLesson(l) {
+  const el = document.getElementById('vl-lesson-'+l);
+  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ── Practice Records ───────────────────────────────────────────────────
+function loadRecords() {
+  try { return JSON.parse(localStorage.getItem('kana_records') || '{"sessions":[]}'); }
+  catch { return {sessions:[]}; }
+}
+function saveRecord(sess) {
+  const records = loadRecords();
+  const label = sess.isVocab
+    ? (sess.lessonNum ? `第${sess.lessonNum}課` : '全課')
+    : (sess.rowName || '全部');
+  records.sessions.unshift({
+    date: new Date().toLocaleString('zh-TW', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}),
+    type: sess.isVocab ? 'vocab' : 'kana_'+sess.type,
+    label,
+    score: sess.score,
+    total: sess.questions.length,
+    missed: [...new Set(sess.missed.map(m => m.k))]
+  });
+  records.sessions = records.sessions.slice(0, 50);
+  localStorage.setItem('kana_records', JSON.stringify(records));
+}
+function clearRecords() {
+  if (!confirm('確定清除所有練習紀錄？')) return;
+  localStorage.removeItem('kana_records');
+  renderRecords();
+}
+function renderRecords() {
+  const records = loadRecords();
+  const container = document.getElementById('records-container');
+  if (!records.sessions.length) {
+    container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px">尚無練習紀錄</p>';
+    return;
+  }
+  const freq = {};
+  records.sessions.forEach(s => s.missed.forEach(ch => { freq[ch] = (freq[ch]||0)+1; }));
+  const top = Object.entries(freq).sort((a,b) => b[1]-a[1]).slice(0,12);
+  let html = '';
+  if (top.length) {
+    html += '<div class="worst-section"><h3>最常答錯</h3><div class="worst-chips">';
+    top.forEach(([ch,n]) => {
+      html += `<div class="worst-chip" onclick="speak('${ch.replace(/'/g,"\\'")}')"><span class="wc-char">${ch}</span><span class="wc-n">${n}次</span></div>`;
+    });
+    html += '</div></div>';
+  }
+  html += `<div style="padding:12px 20px 6px"><span style="font-size:0.75rem;color:var(--muted)">近期練習（共 ${records.sessions.length} 次）</span></div><div style="padding:0 20px 32px">`;
+  records.sessions.forEach(s => {
+    const pct = Math.round(s.score/s.total*100);
+    const pc = pct>=80?'good':pct<60?'bad':'';
+    const tl = s.type.includes('vocab') ? '單字' : (s.type.includes('hiragana') ? '平假名' : '片假名');
+    html += `<div class="rec-session">
+      <div class="rec-meta">${s.date} · ${tl}</div>
+      <div class="rec-row"><span class="rec-label-text">${s.label}</span><span class="rec-pct ${pc}">${pct}% <small style="font-weight:400;font-size:0.8rem">${s.score}/${s.total}</small></span></div>
+      ${s.missed.length ? `<div class="rec-missed">${s.missed.slice(0,8).map(ch=>`<span class="rec-ch">${ch}</span>`).join('')}${s.missed.length>8?`<span class="rec-ch" style="color:var(--muted)">+${s.missed.length-8}</span>`:''}</div>` : ''}
+    </div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
 
 // ── Init ───────────────────────────────────────────────────────────────
 renderKanaHome();
 document.querySelectorAll('.speed-btn').forEach(b=>{ b.textContent=RATE_LABELS[speechRateIdx]; });
+updateMuteBtns();
 </script>
 </body>
 </html>
