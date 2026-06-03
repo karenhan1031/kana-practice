@@ -327,9 +327,9 @@ html,body { height:100%; background:var(--bg); color:var(--text);
 
 <script>
 // ── Speech ─────────────────────────────────────────────────────────────
-const RATES = [0.4, 0.6, 0.8, 1.0];
-const RATE_LABELS = ['0.4x', '0.6x', '0.8x', '1.0x'];
-let speechRateIdx = parseInt(localStorage.getItem('kana_rate_idx') || '1');
+const RATES = [0.2, 0.4, 0.6, 0.8, 1.0];
+const RATE_LABELS = ['0.2x', '0.4x', '0.6x', '0.8x', '1.0x'];
+let speechRateIdx = parseInt(localStorage.getItem('kana_rate_idx') || '2');
 let lastSpoken = '';
 let muteMode = localStorage.getItem('kana_mute') === '1';
 let _jaVoice = null;
